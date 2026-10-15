@@ -64,6 +64,7 @@ class Desktop : public QWidget {
     QString activeWallpaper;
     QWidget *launcher = nullptr;
     QWidget *desktopShortcuts = nullptr;
+    QWidget *panel = nullptr;
     QListWidget *list = nullptr;
     QListWidget *categories = nullptr;
     QLineEdit *search = nullptr;
@@ -109,15 +110,15 @@ public:
         connect(wallpaperTimer, &QTimer::timeout, this, updateWallpaper);
         wallpaperTimer->start(1500);
         setStyleSheet(R"(
-            QWidget#panel { background:#1c2837; border:1px solid #536b82; border-radius:20px; }
-            QWidget#launcher { background:#1a2635; border:1px solid #56728c; border-radius:22px; }
-            QPushButton { color:#e8f2ff; background:#304358; border:1px solid #435d76; border-radius:12px; padding:9px 16px; font-weight:600; }
+            QWidget#panel { background:#101a27; border:1px solid #435a70; border-radius:13px; }
+            QWidget#launcher { background:#0e1926; border:1px solid #4b6279; border-radius:15px; }
+            QPushButton { color:#e8f2ff; background:#1b2d40; border:1px solid #324b65; border-radius:8px; padding:5px 9px; font-weight:600; }
             QPushButton:hover { background:#315a80; border-color:#56a7ee; }
-            QPushButton#menuButton { background:#214466; border:1px solid #3989c6; font-weight:700; }
+            QPushButton#menuButton { background:#173d62; border:1px solid #3989c6; font-size:19px; font-weight:700; }
             QLabel { color:#e8eef7; }
             QLabel#muted { color:#91a8bf; }
             QLabel#clock { font-weight:600; color:#dcecff; }
-            QLineEdit { background:#202f41; color:#f0f7ff; border:1px solid #45698a; border-radius:12px; padding:11px; selection-background-color:#2d75b0; }
+            QLineEdit { background:#182738; color:#f0f7ff; border:1px solid #314b63; border-radius:8px; padding:9px; selection-background-color:#2d75b0; }
             QLineEdit:focus { border-color:#58b1f5; }
             QListWidget { background:transparent; color:#e8eef7; border:0; outline:0; }
             QListWidget::item { padding:11px; border-radius:9px; }
@@ -154,13 +155,13 @@ public:
         desktopShortcuts->move(18,22);
         desktopShortcuts->show();
         auto *root = new QVBoxLayout(this);
-        root->setContentsMargins(22,0,22,18);
+        root->setContentsMargins(20,0,20,14);
         root->addStretch();
-        auto *panel = new QWidget(this); panel->setObjectName("panel"); panel->setFixedHeight(60);
-        auto *bar = new QHBoxLayout(panel); bar->setContentsMargins(16,6,16,6);
-        auto *menu = new QPushButton("◈", panel); menu->setToolTip("Meteora Applications"); menu->setFixedWidth(52); menu->setObjectName("menuButton"); menu->setCursor(Qt::PointingHandCursor);
+        panel = new QWidget(this); panel->setObjectName("panel"); panel->setFixedHeight(48);
+        auto *bar = new QHBoxLayout(panel); bar->setContentsMargins(10,3,12,3);
+        auto *menu = new QPushButton("◈", panel); menu->setToolTip("Meteora Applications"); menu->setFixedWidth(44); menu->setObjectName("menuButton"); menu->setCursor(Qt::PointingHandCursor);
         connect(menu, &QPushButton::clicked, this, [this]{ toggleLauncher(); });
-        bar->addWidget(menu); bar->addSpacing(12);
+        bar->addWidget(menu); bar->addSpacing(6);
         auto *home = new QPushButton("⌂", panel);
         home->setToolTip("Open Home");
         connect(home, &QPushButton::clicked, this, [] {
@@ -181,7 +182,9 @@ public:
 
         
         bar->addStretch();
-        auto *settingsButton = new QPushButton("⚙  Settings", panel);
+        auto *settingsButton = new QPushButton("⚙", panel);
+        settingsButton->setToolTip("Meteora Settings");
+        settingsButton->setFixedWidth(42);
         settingsButton->setCursor(Qt::PointingHandCursor);
         settingsButton->setToolTip("Open Meteora Settings");
         connect(settingsButton, &QPushButton::clicked, this, [this] {
@@ -192,17 +195,18 @@ public:
         });
         bar->addWidget(settingsButton);
         bar->addSpacing(10);
-        auto *closeSession = new QPushButton("Exit preview", panel);
+        auto *closeSession = new QPushButton("⏻", panel);
+        closeSession->setFixedWidth(42);
         closeSession->setToolTip("Close the Meteora test session (not system shutdown)");
         closeSession->setCursor(Qt::PointingHandCursor);
         connect(closeSession, &QPushButton::clicked, this, []{ QApplication::quit(); });
         bar->addWidget(closeSession);
         bar->addSpacing(14);
         auto *clock = new QLabel(panel); clock->setObjectName("clock"); clock->setAlignment(Qt::AlignRight | Qt::AlignVCenter); bar->addWidget(clock);
-        auto tick = [clock]{clock->setText(QDateTime::currentDateTime().toString("HH:mm\nMMM d, yyyy"));};
+        auto tick = [clock]{clock->setText(QDateTime::currentDateTime().toString("h:mm AP\nMMM d, yyyy"));};
         auto *timer = new QTimer(this); connect(timer, &QTimer::timeout, this, tick); timer->start(10000); tick();
         root->addWidget(panel);
-        launcher = new QWidget(this); launcher->setObjectName("launcher"); launcher->setFixedSize(680,500); launcher->hide();
+        launcher = new QWidget(this); launcher->setObjectName("launcher"); launcher->setFixedSize(680,490); launcher->hide();
         auto *layout = new QVBoxLayout(launcher);
         layout->setContentsMargins(18,18,18,14);
         auto *header = new QHBoxLayout;
@@ -216,8 +220,9 @@ public:
         layout->addLayout(header);
         auto *body = new QHBoxLayout;
         categories = new QListWidget(launcher);
-        categories->setFixedWidth(170);
-        categories->addItems({"Quick Access","All Applications","Settings"});
+        categories->setFixedWidth(168);
+        categories->setStyleSheet("QListWidget { border-right:1px solid #314558; } QListWidget::item { padding:12px 10px; }");
+        categories->addItems({"★  Favorites","▦  All Applications","⚙  Settings"});
         categories->setCurrentRow(0);
         body->addWidget(categories);
         list = new QListWidget(launcher);
@@ -227,6 +232,8 @@ public:
         list->setIconSize(QSize(42,42));
         list->setGridSize(QSize(112,100));
         list->setWordWrap(true);
+        list->setSpacing(6);
+        list->setStyleSheet("QListWidget::item { padding:6px; border-radius:10px; }");
         body->addWidget(list,1);
         layout->addLayout(body,1);
         auto *foot = new QLabel("Super: launcher   •   Enter: open   •   Esc: close",launcher);
@@ -306,7 +313,7 @@ protected:
         if (launcher->isVisible() && !launcher->geometry().contains(event->pos())) launcher->hide();
         QWidget::mousePressEvent(event);
     }
-    void resizeEvent(QResizeEvent *e) override { QWidget::resizeEvent(e); launcher->move(22,height()-60-launcher->height()-30); }
+    void resizeEvent(QResizeEvent *e) override { QWidget::resizeEvent(e); launcher->move(20,qMax(12,height()-48-launcher->height()-24)); }
     void paintEvent(QPaintEvent *) override {
         QPainter p(this);
         p.fillRect(rect(), QColor("#10151c"));
