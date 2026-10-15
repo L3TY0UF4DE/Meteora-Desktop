@@ -64,6 +64,12 @@ test("layout creates branded panel, native taskbar, tray and desktop wallpaper",
         "org.kde.plasma.showdesktop"]) {
         assert.ok(widgets.includes(item), `Missing widget: ${item}`);
     }
+    assert.ok(writes.some(([type,key,val]) =>
+        type === "wallpaper" && key === "arrangement" && val === 1),
+        "Desktop icons should form a left-hand column");
+    assert.ok(writes.some(([type,key,val]) =>
+        type === "org.kde.plasma.kickoff" && key === "applicationsDisplay" && val === 0),
+        "App launcher should use an icon grid");
     assert.equal(desktop.wallpaperPlugin, "org.kde.image");
     assert.ok(writes.some(([type,key,val]) =>
         type === "wallpaper" && key === "Image" && val.includes("Meteora/contents/images/")));
