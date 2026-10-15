@@ -20,6 +20,8 @@ class PlasmaPackageTest(unittest.TestCase):
         data = json.loads((LOOK / "metadata.json").read_text())
         self.assertEqual(data["KPackageStructure"], "Plasma/LookAndFeel")
         self.assertEqual(data["KPlugin"]["Id"], "org.meteora.desktop")
+        light = json.loads((ROOT / "plasma/look-and-feel/org.meteora.light/metadata.json").read_text())
+        self.assertEqual(light["KPlugin"]["Id"], "org.meteora.light")
         wallpaper = json.loads((ROOT / "plasma/wallpaper/metadata.json").read_text())
         self.assertEqual(wallpaper["KPackageStructure"], "Wallpaper/Images")
 
@@ -55,6 +57,10 @@ class PlasmaPackageTest(unittest.TestCase):
         scheme.optionxform = str
         self.assertTrue(scheme.read(ROOT / "plasma/color-schemes/MeteoraDark.colors"))
         self.assertEqual(scheme["General"]["Name"], "Meteora Dark")
+        light = configparser.ConfigParser(interpolation=None)
+        light.optionxform = str
+        self.assertTrue(light.read(ROOT / "plasma/color-schemes/MeteoraLight.colors"))
+        self.assertEqual(light["General"]["Name"], "Meteora Light")
         for group in ["Window", "View", "Selection", "Button", "Tooltip", "Complementary"]:
             self.assertIn(f"Colors:{group}", scheme)
             self.assertIn("BackgroundNormal", scheme[f"Colors:{group}"])
@@ -120,6 +126,8 @@ class PlasmaPackageTest(unittest.TestCase):
             self.assertTrue((data / "plasma/look-and-feel/org.meteora.desktop/metadata.json").exists())
             self.assertTrue((data / "wallpapers/Meteora/contents/images/meteora-wallpaper.png").exists())
             self.assertTrue((data / "color-schemes/MeteoraDark.colors").exists())
+            self.assertTrue((data / "color-schemes/MeteoraLight.colors").exists())
+            self.assertTrue((data / "plasma/look-and-feel/org.meteora.light/metadata.json").exists())
             self.assertTrue((data / "plasma/desktoptheme/Meteora/widgets/panel-background.svg").exists())
             self.assertTrue((data / "plasma/plasmoids/org.meteora.launcher/contents/ui/main.qml").exists())
             self.assertTrue((data / "applications/meteora-settings.desktop").exists())
