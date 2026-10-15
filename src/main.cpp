@@ -34,6 +34,8 @@
 #include <QApplication>
 #include <QMouseEvent>
 #include <QListView>
+#include <QToolButton>
+#include <QFileIconProvider>
 #include <algorithm>
 
 struct AppEntry { QString name, exec, icon; };
@@ -61,6 +63,7 @@ class Desktop : public QWidget {
     QString defaultWallpaper;
     QString activeWallpaper;
     QWidget *launcher = nullptr;
+    QWidget *desktopShortcuts = nullptr;
     QListWidget *list = nullptr;
     QListWidget *categories = nullptr;
     QLineEdit *search = nullptr;
@@ -121,12 +124,41 @@ public:
             QListWidget::item:hover { background:#233a51; }
             QListWidget::item:selected { background:#27557b; }
         )");
+        // Desktop shortcuts are genuine folder actions, not decorative icons.
+        desktopShortcuts = new QWidget(this);
+        desktopShortcuts->setObjectName("desktopShortcuts");
+        desktopShortcuts->setStyleSheet("QWidget#desktopShortcuts { background:transparent; } QToolButton { background:transparent; border:0; color:white; padding:7px; font-size:11px; } QToolButton:hover { background:#334d6b; border-radius:10px; }");
+        auto *shortcutColumn = new QVBoxLayout(desktopShortcuts);
+        shortcutColumn->setContentsMargins(0,0,0,0);
+        shortcutColumn->setSpacing(8);
+        const QList<QPair<QString,QString>> folders = {
+            {"Home", QDir::homePath()},
+            {"Documents", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)},
+            {"Downloads", QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)}
+        };
+        QFileIconProvider iconProvider;
+        for (const auto &folder : folders) {
+            auto *button = new QToolButton(desktopShortcuts);
+            button->setText(folder.first);
+            button->setIcon(iconProvider.icon(QFileInfo(folder.second)));
+            button->setIconSize(QSize(36,36));
+            button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+            button->setFixedSize(96,82);
+            button->setCursor(Qt::PointingHandCursor);
+            connect(button, &QToolButton::clicked, this, [path=folder.second] {
+                QProcess::startDetached("xdg-open", {path});
+            });
+            shortcutColumn->addWidget(button);
+        }
+        desktopShortcuts->setFixedSize(100,290);
+        desktopShortcuts->move(18,22);
+        desktopShortcuts->show();
         auto *root = new QVBoxLayout(this);
         root->setContentsMargins(22,0,22,18);
         root->addStretch();
         auto *panel = new QWidget(this); panel->setObjectName("panel"); panel->setFixedHeight(60);
         auto *bar = new QHBoxLayout(panel); bar->setContentsMargins(16,6,16,6);
-        auto *menu = new QPushButton("◈  Meteora", panel); menu->setObjectName("menuButton"); menu->setCursor(Qt::PointingHandCursor);
+        auto *menu = new QPushButton("◈", panel); menu->setToolTip("Meteora Applications"); menu->setFixedWidth(52); menu->setObjectName("menuButton"); menu->setCursor(Qt::PointingHandCursor);
         connect(menu, &QPushButton::clicked, this, [this]{ toggleLauncher(); });
         bar->addWidget(menu); bar->addSpacing(12);
         auto *home = new QPushButton("⌂", panel);
@@ -166,8 +198,8 @@ public:
         connect(closeSession, &QPushButton::clicked, this, []{ QApplication::quit(); });
         bar->addWidget(closeSession);
         bar->addSpacing(14);
-        auto *clock = new QLabel(panel); clock->setObjectName("clock"); bar->addWidget(clock);
-        auto tick = [clock]{clock->setText(QDateTime::currentDateTime().toString("ddd  dd MMM   HH:mm"));};
+        auto *clock = new QLabel(panel); clock->setObjectName("clock"); clock->setAlignment(Qt::AlignRight | Qt::AlignVCenter); bar->addWidget(clock);
+        auto tick = [clock]{clock->setText(QDateTime::currentDateTime().toString("HH:mm\nMMM d, yyyy"));};
         auto *timer = new QTimer(this); connect(timer, &QTimer::timeout, this, tick); timer->start(10000); tick();
         root->addWidget(panel);
         launcher = new QWidget(this); launcher->setObjectName("launcher"); launcher->setFixedSize(680,500); launcher->hide();
@@ -227,6 +259,7 @@ public:
         auto *launcherShadow = new QGraphicsDropShadowEffect(launcher);
         launcherShadow->setBlurRadius(44); launcherShadow->setOffset(0,8);
         launcherShadow->setColor(QColor(0,0,0,170)); launcher->setGraphicsEffect(launcherShadow);
+        desktopShortcuts->raise();
         refresh();
     }
     void refresh() { apps = discoverApps(); populate(); }
