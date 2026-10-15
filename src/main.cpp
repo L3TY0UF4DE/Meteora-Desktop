@@ -24,6 +24,8 @@
 #include <QIcon>
 #include <QRegularExpression>
 #include <QResizeEvent>
+#include <QFont>
+#include <QGraphicsDropShadowEffect>
 #include <algorithm>
 
 struct AppEntry { QString name, exec, icon; };
@@ -54,14 +56,16 @@ class Desktop : public QWidget {
     QList<AppEntry> apps;
 public:
     Desktop() {
-        setWindowTitle("Meteora Desktop — Alpha 0.1 Preview");
-        setMinimumSize(900, 560);
+        setWindowTitle("Meteora Desktop");
+        setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+        setMinimumSize(800, 480);
+        setFont(QFont("Sans Serif", 10));
         QString asset = QCoreApplication::applicationDirPath() + "/../share/meteora/meteora-wallpaper.png";
         if (!QFile::exists(asset)) asset = QCoreApplication::applicationDirPath() + "/assets/meteora-wallpaper.png";
         if (!QFile::exists(asset)) asset = QDir::currentPath() + "/assets/meteora-wallpaper.png";
         wallpaper.load(asset);
-        setStyleSheet("QWidget#panel {background:#141b24; border-top:1px solid #34465a;}"
-                      "QWidget#launcher {background:#171f2a; border:1px solid #46617c; border-radius:12px;}"
+        setStyleSheet("QWidget#panel {background:#151e2b; border:1px solid #344b63; border-radius:16px;}"
+                      "QWidget#launcher {background:#151e2b; border:1px solid #3b5d7c; border-radius:16px;}"
                       "QPushButton {color:#e8eef7;background:#253447;border:0;border-radius:8px;padding:9px 14px;}"
                       "QPushButton:hover {background:#315579;}"
                       "QLabel {color:#e8eef7;}"
@@ -69,14 +73,14 @@ public:
                       "QListWidget {background:#171f2a;color:#e8eef7;border:0;outline:0;}"
                       "QListWidget::item {padding:8px;} QListWidget::item:selected {background:#24527c;border-radius:6px;}");
         auto *root = new QVBoxLayout(this);
-        root->setContentsMargins(0,0,0,0);
+        root->setContentsMargins(18,0,18,14);
         root->addStretch();
-        auto *panel = new QWidget(this); panel->setObjectName("panel"); panel->setFixedHeight(54);
+        auto *panel = new QWidget(this); panel->setObjectName("panel"); panel->setFixedHeight(56);
         auto *bar = new QHBoxLayout(panel); bar->setContentsMargins(14,5,14,5);
-        auto *menu = new QPushButton("◆  Meteora", panel);
+        auto *menu = new QPushButton("◈  Meteora", panel);
         connect(menu, &QPushButton::clicked, this, [this]{ launcher->setVisible(!launcher->isVisible()); if (launcher->isVisible()) { refresh(); search->setFocus(); } });
         bar->addWidget(menu); bar->addSpacing(12);
-        auto *label = new QLabel("Alpha 0.1  •  Desktop preview",panel); label->setStyleSheet("color:#9aadc4"); bar->addWidget(label);
+        
         bar->addStretch();
         auto *clock = new QLabel(panel); bar->addWidget(clock);
         auto tick = [clock]{clock->setText(QDateTime::currentDateTime().toString("ddd  dd MMM   HH:mm"));};
@@ -84,10 +88,10 @@ public:
         root->addWidget(panel);
         launcher = new QWidget(this); launcher->setObjectName("launcher"); launcher->setFixedSize(390,420); launcher->hide();
         auto *layout = new QVBoxLayout(launcher); layout->setContentsMargins(14,14,14,14);
-        auto *title = new QLabel("METEORA  /  Applications", launcher); title->setStyleSheet("font-size:16px;font-weight:700;color:#7bc2ff"); layout->addWidget(title);
+        auto *title = new QLabel("Applications", launcher); title->setStyleSheet("font-size:16px;font-weight:700;color:#7bc2ff"); layout->addWidget(title);
         search = new QLineEdit(launcher); search->setPlaceholderText("Search installed applications..."); layout->addWidget(search);
         list = new QListWidget(launcher); layout->addWidget(list);
-        auto *foot = new QLabel("Installed applications only • No apps bundled", launcher); foot->setStyleSheet("color:#8da2b9;font-size:11px"); layout->addWidget(foot);
+        auto *foot = new QLabel("Installed applications", launcher); foot->setStyleSheet("color:#8da2b9;font-size:11px"); layout->addWidget(foot);
         connect(search, &QLineEdit::textChanged, this, [this]{ populate(); });
         connect(list, &QListWidget::itemActivated, this, [this](QListWidgetItem *item){
             int idx = item->data(Qt::UserRole).toInt();
@@ -116,7 +120,7 @@ public:
         }
     }
 protected:
-    void resizeEvent(QResizeEvent *e) override { QWidget::resizeEvent(e); launcher->move(14,height()-54-launcher->height()-12); }
+    void resizeEvent(QResizeEvent *e) override { QWidget::resizeEvent(e); launcher->move(18,height()-56-launcher->height()-24); }
     void paintEvent(QPaintEvent *) override {
         QPainter p(this);
         p.fillRect(rect(), QColor("#10151c"));
@@ -136,6 +140,6 @@ int main(int argc, char **argv) {
     QApplication app(argc, argv);
     app.setApplicationName("Meteora Desktop Preview");
     Desktop desktop;
-    desktop.show();
+    desktop.showFullScreen();
     return app.exec();
 }
