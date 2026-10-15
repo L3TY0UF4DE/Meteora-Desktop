@@ -42,7 +42,7 @@ The script configures a visible cursor theme and logs compositor startup failure
 
 ## Preview controls
 
-- Click **Meteora** or press **Ctrl+Space** to toggle the application launcher.
+- Click **Meteora** or press **Super** (Windows key, or Command when forwarded by UTM) to toggle the application launcher.
 - Type to filter installed applications; press **Enter** to launch the selected result.
 - Press **Escape** or click outside the launcher to dismiss it.
 - Click **Exit preview** to return to the TTY testing session.
