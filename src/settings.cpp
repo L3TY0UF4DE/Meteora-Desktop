@@ -18,20 +18,20 @@ int main(int argc, char **argv) {
     app.setApplicationName("Meteora Settings");
     QWidget window;
     window.setWindowTitle("Meteora Settings");
-    window.resize(600, 420);
-    window.setMinimumSize(440, 320);
+    window.resize(680, 460);
+    window.setMinimumSize(520, 360);
     window.setStyleSheet(R"(
-        QWidget { background:#121b28; color:#e9f3ff; font-family:'Noto Sans',sans-serif; font-size:13px; }
-        QLabel#heading { font-size:23px; font-weight:700; color:#8acbff; }
+        QWidget { background:#182637; color:#e9f3ff; font-family:'Noto Sans',sans-serif; font-size:13px; }
+        QLabel#heading { font-size:25px; font-weight:700; color:#8acbff; }
         QLabel#hint { color:#9bb1c8; }
-        QGroupBox { border:1px solid #3d5872; border-radius:13px; margin-top:16px; padding:15px; font-weight:600; }
+        QGroupBox { border:1px solid #3d5872; border-radius:18px; margin-top:16px; padding:15px; font-weight:600; }
         QGroupBox::title { subcontrol-origin:margin; left:15px; padding:0 6px; color:#8acbff; }
-        QPushButton { background:#274a69; border:1px solid #3b7aa9; border-radius:9px; padding:10px 15px; font-weight:600; }
+        QPushButton { background:#274a69; border:1px solid #3b7aa9; border-radius:12px; padding:10px 15px; font-weight:600; }
         QPushButton:hover { background:#35688f; }
         QCheckBox { spacing:10px; }
     )");
     auto *root = new QVBoxLayout(&window);
-    root->setContentsMargins(28,24,28,24);
+    root->setContentsMargins(32,30,32,28);
     root->setSpacing(18);
     auto *heading = new QLabel("◈  Meteora Settings");
     heading->setObjectName("heading");
