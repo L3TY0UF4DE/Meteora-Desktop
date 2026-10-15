@@ -1,0 +1,73 @@
+name: Plasma 6 Headless Visual Smoke
+
+on:
+  push:
+    branches: [development]
+    paths:
+      - 'plasma/**'
+      - 'install-meteora-plasma.sh'
+      - '.github/workflows/plasma-visual-smoke.yml'
+  workflow_dispatch:
+
+jobs:
+  plasma6-render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    container:
+      image: debian:trixie
+      options: --shm-size=1g
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native Plasma 6 and virtual display
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            plasma-desktop plasma-workspace kwin-x11 breeze breeze-icon-theme \
+            dbus-x11 xvfb xauth x11-utils xdotool imagemagick
+      - name: Create isolated desktop test user and install Meteora
+        run: |
+          useradd --create-home --shell /bin/bash meteora-ci
+          chown -R meteora-ci:meteora-ci "$GITHUB_WORKSPACE"
+          runuser -u meteora-ci -- bash install-meteora-plasma.sh --install-only
+      - name: Render live KDE Plasma 6 at 1440x900
+        run: |
+          cat > /tmp/render-meteora.sh <<'SCRIPT'
+          #!/usr/bin/env bash
+          set -Eeuo pipefail
+          cd "$1"
+          export XDG_CURRENT_DESKTOP=KDE
+          export XDG_SESSION_DESKTOP=plasma
+          export XDG_SESSION_TYPE=x11
+          export LIBGL_ALWAYS_SOFTWARE=1
+          export QT_QUICK_BACKEND=software
+          export QT_XCB_GL_INTEGRATION=none
+          export QT_LOGGING_RULES='*.debug=false'
+          export XDG_RUNTIME_DIR="$(mktemp -d)"
+          chmod 700 "$XDG_RUNTIME_DIR"
+          kwin_x11 --replace > "$PWD/kwin-headless.log" 2>&1 &
+          kwin_pid=$!
+          plasmashell > "$PWD/plasma-headless.log" 2>&1 &
+          plasma_pid=$!
+          trap 'kill "$plasma_pid" "$kwin_pid" 2>/dev/null || true; rm -rf "$XDG_RUNTIME_DIR"' EXIT
+          sleep 12
+          printf 'METEORA\n' | bash install-meteora-plasma.sh --apply
+          sleep 12
+          # Toggle Kickoff through its panel location for a real popup screenshot.
+          xdotool mousemove 40 868 click 1 || true
+          sleep 3
+          import -window root -display "$DISPLAY" -quality 92 "$PWD/meteora-plasma-live.png"
+          test -s "$PWD/meteora-plasma-live.png"
+          SCRIPT
+          chmod 755 /tmp/render-meteora.sh
+          runuser -u meteora-ci -- xvfb-run -a -s '-screen 0 1440x900x24' \
+            dbus-run-session -- bash /tmp/render-meteora.sh "$GITHUB_WORKSPACE"
+      - name: Upload rendered Plasma screenshot and diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: meteora-plasma6-live-render
+          path: |
+            meteora-plasma-live.png
+            plasma-headless.log
+            kwin-headless.log
+          if-no-files-found: warn
