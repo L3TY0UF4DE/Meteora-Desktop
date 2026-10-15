@@ -40,7 +40,7 @@ PlasmaExtras.PlasmoidHeading {
     PC3.TabBar {
         id: tabBar
 
-        property real tabWidth: Math.max(applicationsTab.implicitWidth, placesTab.implicitWidth)
+        property real tabWidth: 94
 
         focus: true
 
