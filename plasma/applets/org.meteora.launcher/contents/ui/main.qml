@@ -29,9 +29,6 @@ PlasmoidItem {
     width: Kirigami.Units.iconSizes.huge
     height: Kirigami.Units.iconSizes.huge
 
-    switchWidth: fullRepresentationItem ? fullRepresentationItem.Layout.minimumWidth : Kirigami.Units.iconSizes.huge * 10
-    switchHeight: fullRepresentationItem ? fullRepresentationItem.Layout.minimumHeight : Kirigami.Units.iconSizes.huge * 10
-
     // The properties are defined here instead of the singleton because each
     // instance of Kickoff requires different instances of these properties
 
@@ -66,7 +63,6 @@ PlasmoidItem {
         showRecentDocs: false
         showPowerSession: false
         showFavoritesPlaceholder: true
-        highlightNewlyInstalledApps: Plasmoid.configuration.highlightNewlyInstalledApps
 
         Component.onCompleted: {
             favoritesModel.initForClient("org.kde.plasma.kickoff.favorites.instance-" + Plasmoid.id)
@@ -145,7 +141,6 @@ PlasmoidItem {
         id: dragSource // BUG 449426
         property Item sourceItem
         Drag.dragType: Drag.Automatic
-        Drag.supportedActions: Qt.CopyAction | Qt.LinkAction
     }
     //END
 
@@ -184,6 +179,9 @@ PlasmoidItem {
     //END
 
     Plasmoid.icon: Plasmoid.configuration.icon
+
+    switchWidth: fullRepresentationItem ? fullRepresentationItem.Layout.minimumWidth : -1
+    switchHeight: fullRepresentationItem ? fullRepresentationItem.Layout.minimumHeight : -1
 
     preferredRepresentation: compactRepresentation
 
@@ -315,7 +313,7 @@ PlasmoidItem {
                 readonly property bool nonSquareImage: sourceSize.width != sourceSize.height
 
                 visible: nonSquareImage && status == Image.Ready
-                source: Plasmoid.icon.startsWith("file:/") ? Plasmoid.icon : ""
+                source: Plasmoid.icon
 
                 Layout.fillWidth: kickoff.vertical
                 Layout.fillHeight: !kickoff.vertical

@@ -11,7 +11,6 @@ import QtQuick.Templates as T
 import org.kde.kirigami as Kirigami
 import org.kde.ksvg as KSvg
 import org.kde.plasma.plasma5support as P5Support
-import org.kde.plasma.components as PC3
 
 // Using Item because it has a default property.
 // Trying to create a default property for a QtObject seems to cause segfaults.
@@ -69,7 +68,6 @@ Item {
         url: ""
         decoration: "start-here-kde"
         description: "asdf"
-        PC3.ToolTip.text: ""
         width: implicitHeight
         action: null
         indicator: null
@@ -85,7 +83,6 @@ Item {
         text: "asdf"
         url: ""
         decoration: "start-here-kde"
-        PC3.ToolTip.text: ""
         description: "asdf"
         action: null
         indicator: null

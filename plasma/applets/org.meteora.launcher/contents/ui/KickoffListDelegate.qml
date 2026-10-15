@@ -98,7 +98,7 @@ AbstractKickoffItemDelegate {
                     let isSearchResultWithDescription = root.isSearchResult && (Plasmoid.configuration?.appNameFormat > 1 || !isApplicationSearchResult)
                     return text.length > 0 && (isSearchResultWithDescription || (text !== label.text && !root.isCategoryListItem && Plasmoid.configuration?.appNameFormat > 1))
                 }
-                opacity: 0.75
+                enabled: false
                 text: root.description
                 textFormat: Text.PlainText
                 font: Kirigami.Theme.smallFont
@@ -107,18 +107,6 @@ AbstractKickoffItemDelegate {
                 horizontalAlignment: root.compact ? Text.AlignRight : Text.AlignLeft
                 maximumLineCount: 1
                 color: gridLayout.textColor
-            }
-        }
-
-        Loader {
-            visible: active
-            active: root.model?.isNewlyInstalled ?? false
-
-            sourceComponent: Badge {
-                text: root.isCategoryListItem ? "" : Accessible.name
-                Accessible.name: i18nc("Newly installed app, badge, keep short", "New!")
-                Accessible.description: root.isCategoryListItem ? i18n("There is a newly installed application in this category")
-                                                         : i18n("Newly installed application")
             }
         }
     }
