@@ -38,8 +38,6 @@
 struct AppEntry { QString name, exec, icon; };
 static QList<AppEntry> discoverApps() {
     QList<AppEntry> apps;
-    QString defaultWallpaper;
-    QString activeWallpaper;
     QStringList dirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
     dirs.removeDuplicates();
     for (const QString &dir : dirs) {
@@ -59,6 +57,8 @@ static QList<AppEntry> discoverApps() {
 
 class Desktop : public QWidget {
     QPixmap wallpaper;
+    QString defaultWallpaper;
+    QString activeWallpaper;
     QWidget *launcher = nullptr;
     QListWidget *list = nullptr;
     QLineEdit *search = nullptr;
