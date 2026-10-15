@@ -52,7 +52,7 @@ Item {
         font: Kirigami.Theme.defaultFont
     }
 
-    readonly property real gridCellSize: gridDelegate.implicitHeight
+    readonly property real gridCellSize: Math.max(92, gridDelegate.implicitHeight)
     readonly property real compactListDelegateHeight: compactListDelegate.implicitHeight
     readonly property real compactListDelegateContentHeight: compactListDelegate.implicitContentHeight
     //END
