@@ -33,12 +33,12 @@ log in as a normal user on a local TTY, and run:
 bash setup-tty-preview.sh
 ```
 
-This asks before installing build tools, Qt, and **Weston** as a temporary
+This asks before installing build tools, Qt, an Adwaita cursor theme, and **Weston** as a temporary
 Wayland compositor for the existing preview window. Weston is **not** Meteora's
 compositor. The script does not enable SDDM, install a desktop environment,
 or modify GRUB. Requires working DRM/KMS graphics, an active local seat and
 a valid `XDG_RUNTIME_DIR`. Virtual machines or some GPU setups may fail.
-If it fails, share the terminal error; do not run the script as root.
+The script configures a visible cursor theme and logs compositor startup failures. On UTM, ensure the VM has a USB tablet or compatible pointing device. Close the preview with Alt+F4 (or switch TTY). If it fails, share the terminal error; do not run the script as root.
 
 ## Roadmap
 
