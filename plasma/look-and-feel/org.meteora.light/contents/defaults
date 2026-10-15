@@ -5,7 +5,7 @@ ColorScheme=MeteoraLight
 widgetStyle=Breeze
 
 [kdeglobals][Icons]
-Theme=breeze-dark
+Theme=Meteora
 
 [plasmarc][Theme]
 name=Meteora-Light
