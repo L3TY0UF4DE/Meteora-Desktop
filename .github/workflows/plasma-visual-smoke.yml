@@ -22,13 +22,16 @@ jobs:
         run: |
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            plasma-desktop plasma-workspace kwin-x11 breeze breeze-icon-theme \
+            plasma-desktop plasma-workspace kwin-x11 breeze breeze-icon-theme
+            dolphin konsole systemsettings desktop-file-utils xdg-utils \
             dbus-x11 xvfb xauth x11-utils xdotool imagemagick
       - name: Create isolated desktop test user and install Meteora
         run: |
           useradd --create-home --shell /bin/bash meteora-ci
           chown -R meteora-ci:meteora-ci "$GITHUB_WORKSPACE"
           runuser -u meteora-ci -- bash install-meteora-plasma.sh --install-only
+          install -d /home/meteora-ci/Documents /home/meteora-ci/Downloads
+          chown -R meteora-ci:meteora-ci /home/meteora-ci/Documents /home/meteora-ci/Downloads
       - name: Render live KDE Plasma 6 at 1440x900
         run: |
           cat > /tmp/render-meteora.sh <<'SCRIPT'
@@ -38,6 +41,7 @@ jobs:
           export XDG_CURRENT_DESKTOP=KDE
           export XDG_SESSION_DESKTOP=plasma
           export XDG_SESSION_TYPE=x11
+          export XDG_MENU_PREFIX=plasma-
           export LIBGL_ALWAYS_SOFTWARE=1
           export QT_QUICK_BACKEND=software
           export QT_XCB_GL_INTEGRATION=none
