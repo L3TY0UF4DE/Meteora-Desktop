@@ -90,7 +90,15 @@ PlasmaExtras.PlasmoidHeading {
                     // changes to an empty URL and probably back to the same
                     // static file path, so we need QtQuick.Image not to cache it.
                     cache: false
-                    source: Qt.resolvedUrl("../images/meteora.svg")
+                    source: ""
+                    // Meteora emblem drawn over the account button.
+                    Kirigami.Icon {
+                        anchors.centerIn: parent
+                        width: parent.height * 0.82
+                        height: parent.height * 0.82
+                        source: "meteora"
+                        smooth: true
+                    }
 
                     Keys.onTabPressed: event => {
                         tabSetFocus(event, kickoff.firstCentralPane);
