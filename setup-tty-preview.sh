@@ -17,6 +17,11 @@ read -r -p "Install dependencies and start the preview? [y/N] " answer
 sudo pacman -S --needed base-devel cmake qt6-base qt6-wayland weston adwaita-cursors
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel 2
+# Install both Meteora executables, desktop entry, and wallpaper for this user only.
+# Never alter system packages, login manager, or bootloader.
+cmake --install build --prefix "$HOME/.local"
+export PATH="$HOME/.local/bin:$PATH"
+export XDG_DATA_DIRS="$HOME/.local/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 if [[ -z "${XDG_RUNTIME_DIR:-}" || ! -d "${XDG_RUNTIME_DIR:-/nonexistent}" || ! -w "$XDG_RUNTIME_DIR" ]]; then
   echo "No writable XDG_RUNTIME_DIR. Log in normally on a local TTY (systemd-logind)." >&2; exit 1
 fi
@@ -60,7 +65,8 @@ if [[ "$ready" != true ]]; then
   cat "$tmpdir/weston.log" >&2 || true
   exit 1
 fi
-echo "Preview launched. Press Alt+F4 to close it, or switch TTY to return."
+echo "Meteora Settings installed at $HOME/.local/bin/meteora-settings"
+echo "Preview launched. Open Settings from the panel or application launcher."
 echo "If the pointer is missing, verify UTM has a USB tablet/pointing device."
 QT_QPA_PLATFORM=wayland WAYLAND_DISPLAY="$socket" ./build/meteora-preview || {
   result=$?
