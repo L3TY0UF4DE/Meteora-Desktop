@@ -61,7 +61,9 @@ jobs:
           sleep 2
           plasmashell --replace >> "$PWD/plasma-headless.log" 2>&1 &
           sleep 8
-          test "$(kreadconfig6 --file kdeglobals --group Icons --key Theme)" = Meteora
+          icon_theme=$(kreadconfig6 --file kdeglobals --group Icons --key Theme)
+          echo "Persisted icon theme: $icon_theme"
+          test "$icon_theme" = Meteora
           # Toggle Kickoff through its panel location for a real popup screenshot.
           xdotool mousemove 40 868 click 1 || true
           sleep 3

@@ -174,8 +174,21 @@ case "$mode" in
         plasma-apply-colorscheme MeteoraDark
         # Plasma 6 provides plasma-changeicons (not plasma-apply-icons).
         # This also broadcasts the icon change to running KDE applications.
-        if command -v plasma-changeicons >/dev/null 2>&1; then
-            plasma-changeicons Meteora
+        icon_helper="$(command -v plasma-changeicons || true)"
+        if [[ -z "$icon_helper" ]]; then
+            # KDE installs this helper in libexec, outside PATH on Arch/Debian.
+            for candidate in /usr/lib/plasma-changeicons /usr/libexec/plasma-changeicons /usr/lib/*/libexec/plasma-changeicons; do
+                if [[ -x "$candidate" ]]; then
+                    icon_helper="$candidate"
+                    break
+                fi
+            done
+        fi
+        if [[ -n "$icon_helper" ]]; then
+            "$icon_helper" Meteora
+        else
+            echo "Cannot activate Meteora icons: plasma-changeicons is missing from plasma-workspace." >&2
+            exit 1
         fi
         if command -v plasma-apply-desktoptheme >/dev/null 2>&1; then
             plasma-apply-desktoptheme Meteora
