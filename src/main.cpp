@@ -33,6 +33,7 @@
 #include <QShortcut>
 #include <QApplication>
 #include <QMouseEvent>
+#include <QListView>
 #include <algorithm>
 
 struct AppEntry { QString name, exec, icon; };
@@ -61,6 +62,7 @@ class Desktop : public QWidget {
     QString activeWallpaper;
     QWidget *launcher = nullptr;
     QListWidget *list = nullptr;
+    QListWidget *categories = nullptr;
     QLineEdit *search = nullptr;
     QList<AppEntry> apps;
     bool metaHeld = false;
@@ -151,12 +153,37 @@ public:
         auto tick = [clock]{clock->setText(QDateTime::currentDateTime().toString("ddd  dd MMM   HH:mm"));};
         auto *timer = new QTimer(this); connect(timer, &QTimer::timeout, this, tick); timer->start(10000); tick();
         root->addWidget(panel);
-        launcher = new QWidget(this); launcher->setObjectName("launcher"); launcher->setFixedSize(430,480); launcher->hide();
-        auto *layout = new QVBoxLayout(launcher); layout->setContentsMargins(24,24,24,20); layout->setSpacing(14);
-        auto *title = new QLabel("METEORA   /   Applications", launcher); title->setStyleSheet("font-size:16px;font-weight:700;color:#82c8ff"); layout->addWidget(title);
-        search = new QLineEdit(launcher); search->setPlaceholderText("Search applications..."); search->setClearButtonEnabled(true); layout->addWidget(search);
-        list = new QListWidget(launcher); list->setIconSize(QSize(24,24)); list->setSpacing(3); layout->addWidget(list);
-        auto *foot = new QLabel("Super/Command: launcher  •  Enter: open  •  Esc: close", launcher); foot->setObjectName("muted"); foot->setStyleSheet("font-size:11px"); layout->addWidget(foot);
+        launcher = new QWidget(this); launcher->setObjectName("launcher"); launcher->setFixedSize(680,500); launcher->hide();
+        auto *layout = new QVBoxLayout(launcher);
+        layout->setContentsMargins(18,18,18,14);
+        auto *header = new QHBoxLayout;
+        auto *title = new QLabel("◈  Meteora", launcher);
+        title->setStyleSheet("font-size:18px;font-weight:700;color:#91cfff");
+        header->addWidget(title);
+        search = new QLineEdit(launcher);
+        search->setPlaceholderText("Search applications...");
+        search->setClearButtonEnabled(true);
+        header->addWidget(search,1);
+        layout->addLayout(header);
+        auto *body = new QHBoxLayout;
+        categories = new QListWidget(launcher);
+        categories->setFixedWidth(170);
+        categories->addItems({"Favorites","All Applications","Settings"});
+        categories->setCurrentRow(0);
+        body->addWidget(categories);
+        list = new QListWidget(launcher);
+        list->setViewMode(QListView::IconMode);
+        list->setResizeMode(QListView::Adjust);
+        list->setMovement(QListView::Static);
+        list->setIconSize(QSize(42,42));
+        list->setGridSize(QSize(112,100));
+        list->setWordWrap(true);
+        body->addWidget(list,1);
+        layout->addLayout(body,1);
+        auto *foot = new QLabel("Super: launcher   •   Enter: open   •   Esc: close",launcher);
+        foot->setObjectName("muted");
+        layout->addWidget(foot);
+        connect(categories, &QListWidget::currentRowChanged, this, [this](int){ populate(); });
         connect(search, &QLineEdit::textChanged, this, [this]{ populate(); });
         connect(search, &QLineEdit::returnPressed, this, [this]{ activateSelected(); });
         auto *escape = new QShortcut(QKeySequence(Qt::Key_Escape), this);
@@ -188,10 +215,14 @@ public:
     void refresh() { apps = discoverApps(); populate(); }
     void populate() {
         list->clear();
+        int shown = 0;
         for (int i=0;i<apps.size();++i) {
             if (!apps[i].name.contains(search->text(), Qt::CaseInsensitive)) continue;
+            if (search->text().isEmpty() && categories->currentRow() == 0 && shown >= 12) break;
+            if (search->text().isEmpty() && categories->currentRow() == 2 && !apps[i].name.contains("settings", Qt::CaseInsensitive)) continue;
             auto *item = new QListWidgetItem(QIcon::fromTheme(apps[i].icon), apps[i].name, list);
             item->setData(Qt::UserRole,i);
+            ++shown;
         }
         if (list->count()) list->setCurrentRow(0);
     }
