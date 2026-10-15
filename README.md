@@ -1,4 +1,25 @@
-# Meteora Desktop — Alpha 0.2 visual preview
+# Meteora Desktop — KDE Plasma transition (work in progress)
+
+**Direction change:** Meteora is moving from a standalone Qt/Weston proof of concept to a custom KDE Plasma-based desktop. KDE Plasma and KWin will provide real Wayland window management, task switching, workspaces, notifications, system tray, and session infrastructure. Meteora will provide its own original appearance, layout, settings integration and artwork.
+
+This is **not a finished Plasma theme or desktop distribution**. The old preview is preserved for reference and does not become a Plasma shell merely by installing Plasma.
+
+## Opt-in Arch foundation
+
+From a local clone on Arch Linux, run:
+
+```bash
+bash setup-plasma-foundation.sh
+```
+
+The script asks permission before installing KDE Plasma dependencies and stages the Meteora wallpaper in the current user's home directory. It **does not** enable SDDM, change your bootloader, or overwrite your current desktop configuration. Once packages are installed, you can select Plasma in a login manager. On a clean Arch TTY, enabling SDDM is a separate, explicit decision.
+
+## Upstream code and licensing
+
+KDE Plasma/KWin are used as independently installed upstream components under their own GPL/LGPL and other applicable licenses; no KDE source code has been copied into this repository. Any future copied or modified KDE files must retain their applicable notices and licenses. The repository's MIT license applies only to original Meteora code, not upstream KDE code or the wallpaper.
+
+## Legacy Qt preview
+
 
 An original C++20/Qt 6 desktop *visual prototype* for Arch Linux.
 
