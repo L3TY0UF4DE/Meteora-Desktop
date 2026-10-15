@@ -22,7 +22,7 @@ jobs:
         run: |
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            plasma-desktop plasma-workspace kwin-x11 breeze breeze-icon-theme
+            plasma-desktop plasma-workspace kwin-x11 breeze breeze-icon-theme \
             dolphin konsole systemsettings desktop-file-utils xdg-utils \
             dbus-x11 xvfb xauth x11-utils xdotool imagemagick
       - name: Create isolated desktop test user and install Meteora
