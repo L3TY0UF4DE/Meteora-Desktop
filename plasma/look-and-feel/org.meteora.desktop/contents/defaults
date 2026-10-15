@@ -8,7 +8,7 @@ widgetStyle=Breeze
 Theme=breeze-dark
 
 [plasmarc][Theme]
-name=breeze-dark
+name=Meteora
 
 [kwinrc][org.kde.kdecoration2]
 library=org.kde.breeze
