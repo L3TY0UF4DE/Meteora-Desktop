@@ -15,5 +15,14 @@ if ! command -v pkg-config >/dev/null || ! pkg-config --exists Qt6Widgets Qt6Gui
 fi
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel 2
+if [[ -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" ]]; then
+  echo "No X11 or Wayland display detected. Open a terminal inside a graphical desktop session." >&2
+  echo "This preview is not a standalone desktop session." >&2
+  exit 1
+fi
+if [[ -z "${QT_QPA_PLATFORM:-}" && -n "${WAYLAND_DISPLAY:-}" ]]; then
+  export QT_QPA_PLATFORM=wayland
+  echo "Detected Wayland; using Qt Wayland platform plugin."
+fi
 echo "Launching Meteora preview inside your current desktop session."
 exec ./build/meteora-preview
