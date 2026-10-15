@@ -24,6 +24,22 @@ GitHub Actions builds the preview on Ubuntu for an automated compile check; this
 
 Run it **from your existing desktop session**. It will not change your login manager, bootloader, or system configuration. Launcher behavior is basic and does not yet implement the full Desktop Entry Exec specification; some applications may not launch correctly.
 
+## Clean Arch TTY preview (experimental)
+
+On a clean Arch installation with no desktop, clone the `development` branch,
+log in as a normal user on a local TTY, and run:
+
+```bash
+bash setup-tty-preview.sh
+```
+
+This asks before installing build tools, Qt, and **Weston** as a temporary
+Wayland compositor for the existing preview window. Weston is **not** Meteora's
+compositor. The script does not enable SDDM, install a desktop environment,
+or modify GRUB. Requires working DRM/KMS graphics, an active local seat and
+a valid `XDG_RUNTIME_DIR`. Virtual machines or some GPU setups may fail.
+If it fails, share the terminal error; do not run the script as root.
+
 ## Roadmap
 
 1. Preview: branded wallpaper, basic panel, launcher (this package).
