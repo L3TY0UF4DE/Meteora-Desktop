@@ -1,0 +1,8 @@
+[Settings]
+FallbackTheme=breeze
+
+[ContrastEffect]
+contrast=0.12
+enabled=true
+intensity=0.05
+saturation=1.0
