@@ -49,12 +49,13 @@ need_plasma() {
 install_theme() {
     local destination="$data_home/plasma/look-and-feel/$theme_id"
     install -d "$destination" "$data_home/color-schemes" "$data_home/wallpapers/Meteora/contents/images"
-    install -d "$data_home/icons/hicolor/scalable/apps"
+    install -d "$data_home/icons/hicolor/scalable/apps" "$data_home/applications"
     cp -R "$root/plasma/look-and-feel/$theme_id/." "$destination/"
     install -m 0644 "$root/plasma/color-schemes/MeteoraDark.colors" "$data_home/color-schemes/MeteoraDark.colors"
     install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/images/meteora-wallpaper.png"
     install -m 0644 "$root/plasma/wallpaper/metadata.json" "$data_home/wallpapers/Meteora/metadata.json"
     install -m 0644 "$root/plasma/icons/meteora.svg" "$data_home/icons/hicolor/scalable/apps/meteora.svg"
+    install -m 0644 "$root/plasma/applications/org.meteora.settings.desktop" "$data_home/applications/org.meteora.settings.desktop"
     echo "Installed Meteora Plasma assets for $USER."
 }
 
@@ -63,6 +64,7 @@ backup_config() {
     date_stamp="$(date -u +%Y%m%dT%H%M%SZ)"
     backup="$backup_root/${date_stamp}-$$"
     install -d "$backup"
+    : > "$backup/saved-files.txt"
     for file in plasma-org.kde.plasma.desktop-appletsrc plasmashellrc \
                 kdeglobals plasmarc kwinrc kglobalshortcutsrc; do
         if [[ -f "$config_home/$file" ]]; then
@@ -72,6 +74,37 @@ backup_config() {
     done
     printf '%s\n' "$backup" > "$state_home/meteora/last-backup.txt"
     echo "$backup"
+}
+
+create_desktop_shortcuts() {
+    # Add only missing links; never replace or delete the user's desktop items.
+    local desktop_dir="$HOME/Desktop"
+    if command -v xdg-user-dir >/dev/null 2>&1; then
+        local configured
+        configured="$(xdg-user-dir DESKTOP)"
+        [[ -n "$configured" ]] && desktop_dir="$configured"
+    fi
+    install -d "$desktop_dir"
+    local name path
+    for name in Home Documents Downloads; do
+        case "$name" in
+            Home) path="$HOME" ;;
+            Documents) path="$HOME/Documents" ;;
+            Downloads) path="$HOME/Downloads" ;;
+        esac
+        if [[ -d "$path" && ! -e "$desktop_dir/$name" && ! -L "$desktop_dir/$name" ]]; then
+            ln -s "$path" "$desktop_dir/$name"
+        fi
+    done
+    if [[ ! -e "$desktop_dir/Meteora Trash.desktop" ]]; then
+        cat > "$desktop_dir/Meteora Trash.desktop" <<'TRASH'
+[Desktop Entry]
+Type=Link
+Name=Trash
+URL=trash:/
+Icon=user-trash
+TRASH
+    fi
 }
 
 restore_config() {
@@ -132,6 +165,7 @@ case "$mode" in
         echo "Backup saved at $backup"
         plasma-apply-lookandfeel -a "$theme_id" --resetLayout
         plasma-apply-colorscheme MeteoraDark
+        create_desktop_shortcuts
         echo "Meteora Plasma layout applied. Log out and back in if icons or panels do not update."
         ;;
     --restore)
