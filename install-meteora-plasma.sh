@@ -49,8 +49,9 @@ need_plasma() {
 install_theme() {
     local destination="$data_home/plasma/look-and-feel/$theme_id"
     install -d "$destination" "$data_home/color-schemes" "$data_home/wallpapers/Meteora/contents/images"
-    install -d "$data_home/icons/hicolor/scalable/apps" "$data_home/applications"
+    install -d "$data_home/icons/hicolor/scalable/apps" "$data_home/applications" "$data_home/plasma/desktoptheme/Meteora"
     cp -R "$root/plasma/look-and-feel/$theme_id/." "$destination/"
+    cp -R "$root/plasma/desktoptheme/Meteora/." "$data_home/plasma/desktoptheme/Meteora/"
     install -m 0644 "$root/plasma/color-schemes/MeteoraDark.colors" "$data_home/color-schemes/MeteoraDark.colors"
     install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/images/meteora-wallpaper.png"
     install -m 0644 "$root/plasma/wallpaper/metadata.json" "$data_home/wallpapers/Meteora/metadata.json"
@@ -165,6 +166,9 @@ case "$mode" in
         echo "Backup saved at $backup"
         plasma-apply-lookandfeel -a "$theme_id" --resetLayout
         plasma-apply-colorscheme MeteoraDark
+        if command -v plasma-apply-desktoptheme >/dev/null 2>&1; then
+            plasma-apply-desktoptheme Meteora
+        fi
         create_desktop_shortcuts
         echo "Meteora Plasma layout applied. Log out and back in if icons or panels do not update."
         ;;
