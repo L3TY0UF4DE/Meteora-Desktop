@@ -30,6 +30,20 @@ fi
 if [[ ! -d "$XDG_RUNTIME_DIR" || ! -w "$XDG_RUNTIME_DIR" ]]; then
   echo "XDG_RUNTIME_DIR is not writable: $XDG_RUNTIME_DIR" >&2; exit 1
 fi
-echo "Starting Weston with Meteora preview as its client. Exit the preview to return to TTY."
-# Weston runs as the unprivileged logged-in user; its DRM backend needs a local active seat.
-exec weston --backend=drm --shell=kiosk-shell.so -- ./build/meteora-preview
+echo "Starting temporary Weston compositor. Close Meteora preview to return to TTY."
+socket="meteora-preview-$"
+weston --backend=drm --shell=kiosk-shell.so --socket="$socket" &
+weston_pid=$!
+cleanup() { kill "$weston_pid" 2>/dev/null || true; wait "$weston_pid" 2>/dev/null || true; }
+trap cleanup EXIT INT TERM
+for _ in $(seq 1 50); do
+  if [[ -S "$XDG_RUNTIME_DIR/$socket" ]]; then break; fi
+  if ! kill -0 "$weston_pid" 2>/dev/null; then
+    echo "Weston exited before creating a display. Check GPU/seat permissions." >&2; exit 1
+  fi
+  sleep 0.1
+done
+if [[ ! -S "$XDG_RUNTIME_DIR/$socket" ]]; then
+  echo "Timed out waiting for Weston display." >&2; exit 1
+fi
+QT_QPA_PLATFORM=wayland WAYLAND_DISPLAY="$socket" ./build/meteora-preview
