@@ -104,15 +104,15 @@ public:
         connect(wallpaperTimer, &QTimer::timeout, this, updateWallpaper);
         wallpaperTimer->start(1500);
         setStyleSheet(R"(
-            QWidget#panel { background:#141d29; border:1px solid #35516c; border-radius:20px; }
-            QWidget#launcher { background:#121b28; border:1px solid #416487; border-radius:22px; }
-            QPushButton { color:#e8f2ff; background:#25384d; border:1px solid #354e68; border-radius:10px; padding:9px 16px; font-weight:600; }
+            QWidget#panel { background:#1c2837; border:1px solid #536b82; border-radius:20px; }
+            QWidget#launcher { background:#1a2635; border:1px solid #56728c; border-radius:22px; }
+            QPushButton { color:#e8f2ff; background:#304358; border:1px solid #435d76; border-radius:12px; padding:9px 16px; font-weight:600; }
             QPushButton:hover { background:#315a80; border-color:#56a7ee; }
             QPushButton#menuButton { background:#214466; border:1px solid #3989c6; font-weight:700; }
             QLabel { color:#e8eef7; }
             QLabel#muted { color:#91a8bf; }
             QLabel#clock { font-weight:600; color:#dcecff; }
-            QLineEdit { background:#202f41; color:#f0f7ff; border:1px solid #45698a; border-radius:10px; padding:11px; selection-background-color:#2d75b0; }
+            QLineEdit { background:#202f41; color:#f0f7ff; border:1px solid #45698a; border-radius:12px; padding:11px; selection-background-color:#2d75b0; }
             QLineEdit:focus { border-color:#58b1f5; }
             QListWidget { background:transparent; color:#e8eef7; border:0; outline:0; }
             QListWidget::item { padding:11px; border-radius:9px; }
@@ -123,7 +123,7 @@ public:
         root->setContentsMargins(22,0,22,18);
         root->addStretch();
         auto *panel = new QWidget(this); panel->setObjectName("panel"); panel->setFixedHeight(60);
-        auto *bar = new QHBoxLayout(panel); bar->setContentsMargins(14,5,14,5);
+        auto *bar = new QHBoxLayout(panel); bar->setContentsMargins(16,6,16,6);
         auto *menu = new QPushButton("◈  Meteora", panel); menu->setObjectName("menuButton"); menu->setCursor(Qt::PointingHandCursor);
         connect(menu, &QPushButton::clicked, this, [this]{ toggleLauncher(); });
         bar->addWidget(menu); bar->addSpacing(14);
@@ -152,7 +152,7 @@ public:
         auto *timer = new QTimer(this); connect(timer, &QTimer::timeout, this, tick); timer->start(10000); tick();
         root->addWidget(panel);
         launcher = new QWidget(this); launcher->setObjectName("launcher"); launcher->setFixedSize(430,480); launcher->hide();
-        auto *layout = new QVBoxLayout(launcher); layout->setContentsMargins(24,24,24,20); layout->setSpacing(12);
+        auto *layout = new QVBoxLayout(launcher); layout->setContentsMargins(24,24,24,20); layout->setSpacing(14);
         auto *title = new QLabel("METEORA   /   Applications", launcher); title->setStyleSheet("font-size:16px;font-weight:700;color:#82c8ff"); layout->addWidget(title);
         search = new QLineEdit(launcher); search->setPlaceholderText("Search applications..."); search->setClearButtonEnabled(true); layout->addWidget(search);
         list = new QListWidget(launcher); list->setIconSize(QSize(24,24)); list->setSpacing(3); layout->addWidget(list);
