@@ -72,7 +72,7 @@ class PlasmaPackageTest(unittest.TestCase):
         self.assertIn('new Panel', script)
         self.assertIn('panel.location = "bottom"', script)
         self.assertIn('panel.floating = true', script)
-        self.assertIn('"org.kde.plasma.kickoff"', script)
+        self.assertIn('"org.meteora.launcher"', script)
         self.assertIn('"org.kde.plasma.icontasks"', script)
         self.assertIn('"org.kde.plasma.systemtray"', script)
         self.assertIn('"org.kde.plasma.digitalclock"', script)
