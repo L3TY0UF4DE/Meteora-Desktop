@@ -25,6 +25,7 @@
 #include <QRegularExpression>
 #include <QResizeEvent>
 #include <QFont>
+#include <QCursor>
 #include <QGraphicsDropShadowEffect>
 #include <algorithm>
 
@@ -58,6 +59,7 @@ public:
     Desktop() {
         setWindowTitle("Meteora Desktop");
         setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+        setCursor(Qt::ArrowCursor);
         setMinimumSize(800, 480);
         setFont(QFont("Sans Serif", 10));
         QString asset = QCoreApplication::applicationDirPath() + "/../share/meteora/meteora-wallpaper.png";
@@ -140,6 +142,7 @@ int main(int argc, char **argv) {
     QApplication app(argc, argv);
     app.setApplicationName("Meteora Desktop Preview");
     Desktop desktop;
-    desktop.showFullScreen();
+    // Maximized frameless avoids some virtualized Wayland fullscreen pointer issues.
+    desktop.showMaximized();
     return app.exec();
 }
