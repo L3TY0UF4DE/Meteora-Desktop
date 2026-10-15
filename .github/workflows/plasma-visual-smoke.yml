@@ -61,6 +61,10 @@ jobs:
           sleep 3
           import -window root -display "$DISPLAY" -quality 92 "$PWD/meteora-plasma-live.png"
           test -s "$PWD/meteora-plasma-live.png"
+          if grep -E 'error when loading applet "org.meteora.launcher"|org.meteora.launcher/contents/ui/.*Cannot assign|org.meteora.launcher/contents/ui/.*is not a type' "$PWD/plasma-headless.log"; then
+            echo "Meteora launcher QML failed to load." >&2
+            exit 1
+          fi
           SCRIPT
           chmod 755 /tmp/render-meteora.sh
           runuser -u meteora-ci -- xvfb-run -a -s '-screen 0 1440x900x24' \
