@@ -103,7 +103,7 @@ EmptyPage {
 
 
         implicitWidth: {
-            let w = view.cellWidth * kickoff.minimumGridRowCount + leftMargin + rightMargin
+            let w = view.cellWidth * kickoff.minimumGridColumnCount + leftMargin + rightMargin
             if (kickoff.mayHaveGridWithScrollBar) {
                 w += verticalScrollBar.implicitWidth
             }
