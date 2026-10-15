@@ -17,5 +17,7 @@ jobs:
           bash -n setup-tty-preview.sh
       - name: Validate JavaScript syntax
         run: node --check plasma/look-and-feel/org.meteora.desktop/contents/layouts/org.kde.plasma.desktop-layout.js
+      - name: Test Plasma layout behavior
+        run: node --test tests/plasma-layout.test.mjs
       - name: Test Plasma package and installer
         run: python3 -m unittest discover -s tests -p 'test_plasma_package.py' -v
