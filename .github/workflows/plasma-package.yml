@@ -1,0 +1,21 @@
+name: Validate Meteora Plasma Package
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+
+jobs:
+  validate-plasma:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Bash scripts
+        run: |
+          bash -n setup-plasma-foundation.sh
+          bash -n install-meteora-plasma.sh
+          bash -n setup-tty-preview.sh
+      - name: Validate JavaScript syntax
+        run: node --check plasma/look-and-feel/org.meteora.desktop/contents/layouts/org.kde.plasma.desktop-layout.js
+      - name: Test Plasma package and installer
+        run: python3 -m unittest discover -s tests -p 'test_plasma_package.py' -v
