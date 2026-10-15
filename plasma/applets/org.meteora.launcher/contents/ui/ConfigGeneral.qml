@@ -38,7 +38,6 @@ KCM.SimpleKCM {
     property int cfg_primaryActions: Plasmoid.configuration.primaryActions
     property alias cfg_showActionButtonCaptions: showActionButtonCaptions.checked
     property alias cfg_compactMode: compactModeCheckbox.checked
-    property alias cfg_highlightNewlyInstalledApps: highlightNewlyInstalledAppsCheckbox.checked
     property alias cfg_switchCategoryOnHover: switchCategoryOnHoverCheckbox.checked
 
     Kirigami.FormLayout {
@@ -168,17 +167,10 @@ KCM.SimpleKCM {
             Kirigami.FormData.isSection: true
         }
 
-        RowLayout {
+        QQC2.CheckBox {
+            id: alphaSort
             Kirigami.FormData.label: i18nc("General options", "General:")
-            spacing: Kirigami.Units.smallSpacing
-            QQC2.CheckBox {
-                id: alphaSort
-                text: i18nc("@option:check", "Sort applications alphabetically")
-            }
-
-            Kirigami.ContextualHelpButton {
-                toolTipText: i18nc("@info:whatsthis", "This doesn't affect how applications are sorted in either search results or the favorites page.")
-            }
+            text: i18n("Always sort applications alphabetically")
         }
 
         QQC2.CheckBox {
@@ -193,11 +185,6 @@ KCM.SimpleKCM {
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             font: Kirigami.Theme.smallFont
-        }
-
-        QQC2.CheckBox {
-            id: highlightNewlyInstalledAppsCheckbox
-            text: i18n("Highlight newly installed applications")
         }
 
         QQC2.CheckBox {

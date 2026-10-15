@@ -122,8 +122,7 @@ T.ItemDelegate {
             // Unless we're showing search results, eat the activation if we
             // don't have focus, to prevent the return/enter key from
             // inappropriately activating unfocused items
-            // Also block activation while dragging.
-            if ((!root.activeFocus && !root.isSearchResult) || dragHandler.active || touchDragHandler.active) {
+            if (!root.activeFocus && !root.isSearchResult) {
                 return;
             }
             view.currentIndex = index
@@ -238,10 +237,9 @@ T.ItemDelegate {
     }
 
     PC3.ToolTip.text: {
-        if (root.labelTruncated) {
+        if (root.labelTruncated && root.descriptionTruncated) {
             return model.display
-        } else if (root.descriptionTruncated || (!root.descriptionVisible && (root.isSearchResult
-                                                                              || Plasmoid.configuration.appNameFormat > 1))) {
+        } else if (root.descriptionTruncated || !root.descriptionVisible) {
             return description
         }
         return ""
