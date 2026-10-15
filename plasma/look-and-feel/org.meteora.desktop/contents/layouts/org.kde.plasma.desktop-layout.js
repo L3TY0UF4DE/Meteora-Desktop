@@ -9,7 +9,7 @@
         desktop.wallpaperPlugin = "org.kde.image";
         desktop.currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
         desktop.writeConfig("Image", "file://" + wallpaperPath);
-        desktop.writeConfig("FillMode", 1); // Preserve aspect ratio: keep original Meteora logo visible
+        desktop.writeConfig("FillMode", 0); // Full-screen stretch; avoid letterbox gaps in variable resolution desktops
         desktop.currentConfigGroup = ["General"];
         desktop.writeConfig("arrangement", 1); // icons top to bottom
         desktop.writeConfig("alignment", 0); // left
