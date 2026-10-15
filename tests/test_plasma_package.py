@@ -106,7 +106,7 @@ class PlasmaPackageTest(unittest.TestCase):
             self.assertTrue((data / "wallpapers/Meteora/contents/images/meteora-wallpaper.png").exists())
             self.assertTrue((data / "color-schemes/MeteoraDark.colors").exists())
             self.assertTrue((data / "plasma/desktoptheme/Meteora/widgets/panel-background.svg").exists())
-            self.assertTrue((data / "applications/org.meteora.settings.desktop").exists())
+            self.assertTrue((data / "applications/meteora-settings.desktop").exists())
             self.assertFalse(log.exists(), "Installing assets must not apply Plasma settings")
 
             env["XDG_CURRENT_DESKTOP"] = "GNOME"
