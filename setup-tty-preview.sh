@@ -15,8 +15,14 @@ echo "No SDDM, GRUB, autostart, or full desktop environment changes."
 read -r -p "Install dependencies and start the preview? [y/N] " answer
 [[ "$answer" =~ ^[Yy]$ ]] || exit 0
 sudo pacman -S --needed base-devel cmake qt6-base qt6-wayland weston adwaita-cursors
+echo "Git branch: $(git branch --show-current)"
+echo "Git commit: $(git rev-parse --short HEAD)"
+if [[ "$(git branch --show-current)" != "development" ]]; then
+  echo "Warning: You are not on the development branch; latest design changes may be missing." >&2
+fi
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel 2
+echo "Built Meteora preview from commit $(git rev-parse --short HEAD)"
 # Install both Meteora executables, desktop entry, and wallpaper for this user only.
 # Never alter system packages, login manager, or bootloader.
 cmake --install build --prefix "$HOME/.local"
