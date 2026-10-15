@@ -57,8 +57,10 @@ test("layout creates branded panel, native taskbar, tray and desktop wallpaper",
     assert.equal(panel.location, "bottom");
     assert.equal(panel.height, 46);
     assert.equal(panel.floating, true);
+    assert.ok(writes.some(([type,key,val]) => type === "org.meteora.launcher" && key === "icon" && val === "meteora"));
+    assert.equal(panel.added[0].name, "org.meteora.launcher");
     const widgets = panel.added.map(item => item.name);
-    assert.equal(widgets[0], "org.kde.plasma.kickoff");
+    assert.equal(widgets[0], "org.meteora.launcher");
     for (const item of ["org.kde.plasma.icontasks", "org.kde.plasma.pager",
         "org.kde.plasma.systemtray", "org.kde.plasma.digitalclock",
         "org.kde.plasma.showdesktop"]) {
@@ -68,13 +70,13 @@ test("layout creates branded panel, native taskbar, tray and desktop wallpaper",
         type === "wallpaper" && key === "arrangement" && val === 1),
         "Desktop icons should form a left-hand column");
     assert.ok(writes.some(([type,key,val]) =>
-        type === "org.kde.plasma.kickoff" && key === "applicationsDisplay" && val === 0),
+        type === "org.meteora.launcher" && key === "applicationsDisplay" && val === 0),
         "App launcher should use an icon grid");
     assert.equal(desktop.wallpaperPlugin, "org.kde.image");
     assert.ok(writes.some(([type,key,val]) =>
         type === "wallpaper" && key === "Image" && val.includes("Meteora/contents/images/")));
     assert.ok(writes.some(([type,key,val]) =>
-        type === "org.kde.plasma.kickoff" && key === "icon" && val === "meteora"));
+        type === "org.meteora.launcher" && key === "icon" && val === "meteora"));
     assert.ok(writes.some(([type,key,val]) =>
         type === "org.kde.plasma.icontasks" && key === "launchers" && val.includes("dolphin")));
 });
