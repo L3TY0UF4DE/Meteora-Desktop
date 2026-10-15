@@ -35,6 +35,21 @@ class PlasmaPackageTest(unittest.TestCase):
                           "bottomleft", "bottom", "bottomright"]:
                 self.assertIn(piece, ids)
 
+    def test_licensed_launcher_fork(self):
+        plugin = ROOT / "plasma/applets/org.meteora.launcher"
+        meta = json.loads((plugin / "metadata.json").read_text())
+        self.assertEqual(meta["KPackageStructure"], "Plasma/Applet")
+        self.assertEqual(meta["KPlugin"]["Id"], "org.meteora.launcher")
+        self.assertTrue(meta["KPlugin"]["License"].startswith("GPL-2.0"))
+        self.assertIn("KDE", (plugin / "UPSTREAM.md").read_text())
+        qml_files = list((plugin / "contents/ui").glob("*.qml"))
+        self.assertGreaterEqual(len(qml_files), 20)
+        for source in qml_files:
+            self.assertIn("SPDX-License-Identifier", source.read_text())
+        config = (plugin / "contents/config/main.xml").read_text()
+        self.assertIn("<default>meteora</default>", config)
+        self.assertIn('name="applicationsDisplay"', config)
+
     def test_palette(self):
         scheme = configparser.ConfigParser(interpolation=None)
         scheme.optionxform = str
@@ -106,6 +121,7 @@ class PlasmaPackageTest(unittest.TestCase):
             self.assertTrue((data / "wallpapers/Meteora/contents/images/meteora-wallpaper.png").exists())
             self.assertTrue((data / "color-schemes/MeteoraDark.colors").exists())
             self.assertTrue((data / "plasma/desktoptheme/Meteora/widgets/panel-background.svg").exists())
+            self.assertTrue((data / "plasma/plasmoids/org.meteora.launcher/contents/ui/main.qml").exists())
             self.assertTrue((data / "applications/meteora-settings.desktop").exists())
             self.assertFalse(log.exists(), "Installing assets must not apply Plasma settings")
 
