@@ -41,7 +41,7 @@ EmptyPage {
 
     footer: Footer {
         id: footer
-        preferredTabBarWidth: root.preferredSideBarWidth
+        preferredTabBarWidth: Math.max(212, root.preferredSideBarWidth)
         Binding {
             target: kickoff
             property: "footer"

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- SPDX-License-Identifier: MIT; Original Meteora vector style. -->
 <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
-  <g id="topleft"><path d="M12 0 A12 12 0 0 0 0 12 H12 Z" fill="#132335" fill-opacity=".93"/><path d="M0.6 12 A11.4 11.4 0 0 1 12 0.6" fill="none" stroke="#4a6b89" stroke-width="1"/></g>
-  <g id="top"><rect x="12" y="0" width="12" height="12" fill="#132335" fill-opacity=".93"/><path d="M12 0.5 H24" stroke="#4a6b89" stroke-width="1"/></g>
-  <g id="topright"><path d="M24 0 A12 12 0 0 1 36 12 H24 Z" fill="#132335" fill-opacity=".93"/><path d="M24 0.6 A11.4 11.4 0 0 1 35.4 12" stroke="#4a6b89" fill="none" stroke-width="1"/></g>
-  <g id="left"><rect x="0" y="12" width="12" height="12" fill="#132335" fill-opacity=".93"/><path d="M0.5 12 V24" stroke="#4a6b89" stroke-width="1"/></g>
-  <rect id="center" x="12" y="12" width="12" height="12" fill="#132335" fill-opacity=".93"/>
-  <g id="right"><rect x="24" y="12" width="12" height="12" fill="#132335" fill-opacity=".93"/><path d="M35.5 12 V24" stroke="#4a6b89" stroke-width="1"/></g>
-  <g id="bottomleft"><path d="M0 24 A12 12 0 0 0 12 36 V24 Z" fill="#132335" fill-opacity=".93"/><path d="M0.6 24 A11.4 11.4 0 0 0 12 35.4" stroke="#4a6b89" fill="none" stroke-width="1"/></g>
-  <g id="bottom"><rect x="12" y="24" width="12" height="12" fill="#132335" fill-opacity=".93"/><path d="M12 35.5 H24" stroke="#4a6b89" stroke-width="1"/></g>
-  <g id="bottomright"><path d="M24 36 A12 12 0 0 0 36 24 H24 Z" fill="#132335" fill-opacity=".93"/><path d="M24 35.4 A11.4 11.4 0 0 0 35.4 24" stroke="#4a6b89" fill="none" stroke-width="1"/></g>
+  <g id="topleft"><path d="M12 0 A12 12 0 0 0 0 12 H12 Z" fill="#0c151e" fill-opacity=".93"/><path d="M0.6 12 A11.4 11.4 0 0 1 12 0.6" fill="none" stroke="#4a6b89" stroke-width="1"/></g>
+  <g id="top"><rect x="12" y="0" width="12" height="12" fill="#0c151e" fill-opacity=".93"/><path d="M12 0.5 H24" stroke="#4a6b89" stroke-width="1"/></g>
+  <g id="topright"><path d="M24 0 A12 12 0 0 1 36 12 H24 Z" fill="#0c151e" fill-opacity=".93"/><path d="M24 0.6 A11.4 11.4 0 0 1 35.4 12" stroke="#4a6b89" fill="none" stroke-width="1"/></g>
+  <g id="left"><rect x="0" y="12" width="12" height="12" fill="#0c151e" fill-opacity=".93"/><path d="M0.5 12 V24" stroke="#4a6b89" stroke-width="1"/></g>
+  <rect id="center" x="12" y="12" width="12" height="12" fill="#0c151e" fill-opacity=".93"/>
+  <g id="right"><rect x="24" y="12" width="12" height="12" fill="#0c151e" fill-opacity=".93"/><path d="M35.5 12 V24" stroke="#4a6b89" stroke-width="1"/></g>
+  <g id="bottomleft"><path d="M0 24 A12 12 0 0 0 12 36 V24 Z" fill="#0c151e" fill-opacity=".93"/><path d="M0.6 24 A11.4 11.4 0 0 0 12 35.4" stroke="#4a6b89" fill="none" stroke-width="1"/></g>
+  <g id="bottom"><rect x="12" y="24" width="12" height="12" fill="#0c151e" fill-opacity=".93"/><path d="M12 35.5 H24" stroke="#4a6b89" stroke-width="1"/></g>
+  <g id="bottomright"><path d="M24 36 A12 12 0 0 0 36 24 H24 Z" fill="#0c151e" fill-opacity=".93"/><path d="M24 35.4 A11.4 11.4 0 0 0 35.4 24" stroke="#4a6b89" fill="none" stroke-width="1"/></g>
   <rect id="hint-stretch-borders" x="40" y="0" width="1" height="1" fill="#000" opacity="0.01"/>
   <rect id="hint-top-margin" x="40" y="2" width="1" height="8" fill="#000" opacity="0.01"/>
   <rect id="hint-bottom-margin" x="40" y="12" width="1" height="8" fill="#000" opacity="0.01"/>

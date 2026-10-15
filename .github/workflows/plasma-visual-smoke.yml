@@ -24,7 +24,7 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             plasma-desktop plasma-workspace kwin-x11 breeze breeze-icon-theme \
             dolphin konsole systemsettings desktop-file-utils xdg-utils \
-            dbus-x11 xvfb xauth x11-utils xdotool imagemagick libgl1-mesa-dri libnotify-bin \
+            libkf6dbusaddons-bin libkf6config-bin kglobalacceld dbus-x11 xvfb xauth x11-utils xdotool imagemagick libgl1-mesa-dri libnotify-bin \
             firefox-esr plasma-discover kate kcalc kclock plasma-systemmonitor kde-spectacle kdenlive
       - name: Create isolated desktop test user and install Meteora
         run: |
@@ -69,15 +69,15 @@ jobs:
           test -s "$PWD/meteora-plasma-live.png"
           xdotool key Escape
           dolphin --new-window "$HOME" > "$PWD/dolphin.log" 2>&1 &
-          dolphin_id=$(xdotool search --sync --onlyvisible --class dolphin | head -1)
+          dolphin_id=$(timeout 30s xdotool search --sync --onlyvisible --class dolphin | head -1)
           xdotool windowsize "$dolphin_id" 650 470 windowmove "$dolphin_id" 30 100
           konsole --separate > "$PWD/konsole.log" 2>&1 &
-          konsole_id=$(xdotool search --sync --onlyvisible --class konsole | head -1)
+          konsole_id=$(timeout 30s xdotool search --sync --onlyvisible --class konsole | head -1)
           xdotool windowsize "$konsole_id" 650 470 windowmove "$konsole_id" 740 100
           sleep 4
           import -window root "$PWD/meteora-windows.png"
           systemsettings > "$PWD/settings.log" 2>&1 &
-          settings_id=$(xdotool search --sync --onlyvisible --class systemsettings | head -1)
+          settings_id=$(timeout 30s xdotool search --sync --onlyvisible --class systemsettings | head -1)
           xdotool windowsize "$settings_id" 900 650 windowmove "$settings_id" 270 60
           sleep 4
           import -window root "$PWD/meteora-settings.png"
