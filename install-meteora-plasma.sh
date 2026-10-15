@@ -56,7 +56,7 @@ install_theme() {
     install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/images/meteora-wallpaper.png"
     install -m 0644 "$root/plasma/wallpaper/metadata.json" "$data_home/wallpapers/Meteora/metadata.json"
     install -m 0644 "$root/plasma/icons/meteora.svg" "$data_home/icons/hicolor/scalable/apps/meteora.svg"
-    install -m 0644 "$root/plasma/applications/org.meteora.settings.desktop" "$data_home/applications/org.meteora.settings.desktop"
+    install -m 0644 "$root/plasma/applications/org.meteora.settings.desktop" "$data_home/applications/meteora-settings.desktop"
     echo "Installed Meteora Plasma assets for $USER."
 }
 
@@ -67,7 +67,7 @@ backup_config() {
     install -d "$backup"
     : > "$backup/saved-files.txt"
     for file in plasma-org.kde.plasma.desktop-appletsrc plasmashellrc \
-                kdeglobals plasmarc kwinrc kglobalshortcutsrc; do
+                kdeglobals plasmarc kwinrc kglobalshortcutsrc kscreenlockerrc kcminputrc; do
         if [[ -f "$config_home/$file" ]]; then
             cp -p "$config_home/$file" "$backup/$file"
             printf '%s\n' "$file" >> "$backup/saved-files.txt"
@@ -133,7 +133,7 @@ restore_config() {
     install -d "$config_home"
     while IFS= read -r file; do
         case "$file" in
-            plasma-org.kde.plasma.desktop-appletsrc|plasmashellrc|kdeglobals|plasmarc|kwinrc|kglobalshortcutsrc) ;;
+            plasma-org.kde.plasma.desktop-appletsrc|plasmashellrc|kdeglobals|plasmarc|kwinrc|kglobalshortcutsrc|kscreenlockerrc|kcminputrc) ;;
             *) echo "Unsafe filename in manifest." >&2; exit 1 ;;
         esac
         [[ -f "$canonical_folder/$file" ]] || { echo "Backup incomplete." >&2; exit 1; }
