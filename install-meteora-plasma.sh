@@ -49,7 +49,7 @@ need_plasma() {
 install_theme() {
     local destination="$data_home/plasma/look-and-feel/$theme_id"
     install -d "$destination" "$data_home/plasma/look-and-feel/org.meteora.light" "$data_home/color-schemes" "$data_home/wallpapers/Meteora/contents/images"
-    install -d "$data_home/icons/hicolor/scalable/apps" "$data_home/applications" "$data_home/plasma/desktoptheme/Meteora" "$data_home/plasma/plasmoids/org.meteora.launcher" "$data_home/plasma/desktoptheme/Meteora-Light"
+    install -d "$data_home/icons/hicolor/scalable/apps" "$data_home/icons/Meteora" "$data_home/applications" "$data_home/plasma/desktoptheme/Meteora" "$data_home/plasma/plasmoids/org.meteora.launcher" "$data_home/plasma/desktoptheme/Meteora-Light"
     cp -R "$root/plasma/look-and-feel/$theme_id/." "$destination/"
     cp -R "$root/plasma/look-and-feel/org.meteora.light/." "$data_home/plasma/look-and-feel/org.meteora.light/"
     cp -R "$root/plasma/desktoptheme/Meteora/." "$data_home/plasma/desktoptheme/Meteora/"
@@ -61,6 +61,7 @@ install_theme() {
     install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/screenshot.png"
     install -m 0644 "$root/plasma/wallpaper/metadata.json" "$data_home/wallpapers/Meteora/metadata.json"
     install -m 0644 "$root/plasma/icons/meteora.svg" "$data_home/icons/hicolor/scalable/apps/meteora.svg"
+    cp -R "$root/plasma/icons/Meteora/." "$data_home/icons/Meteora/"
     install -m 0644 "$root/plasma/applications/org.meteora.settings.desktop" "$data_home/applications/meteora-settings.desktop"
     echo "Installed Meteora Plasma assets and KDE-derived launcher for $USER."
 }
@@ -171,6 +172,9 @@ case "$mode" in
         echo "Backup saved at $backup"
         plasma-apply-lookandfeel -a "$theme_id" --resetLayout
         plasma-apply-colorscheme MeteoraDark
+        if command -v plasma-apply-icons >/dev/null 2>&1; then
+            plasma-apply-icons Meteora
+        fi
         if command -v plasma-apply-desktoptheme >/dev/null 2>&1; then
             plasma-apply-desktoptheme Meteora
         fi
