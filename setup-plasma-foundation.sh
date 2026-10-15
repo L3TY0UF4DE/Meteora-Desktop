@@ -11,12 +11,11 @@ echo "Installs KDE Plasma, KWin, SDDM, and Qt6 tooling through Arch packages."
 echo "Does NOT enable SDDM, change GRUB, replace your current session, or remove Weston."
 read -r -p "Install KDE Plasma dependencies? [y/N] " reply
 [[ "$reply" =~ ^[Yy]$ ]] || exit 0
-sudo pacman -S --needed plasma-meta sddm qt6-base qt6-wayland cmake base-devel
-install -d "$HOME/.local/share/wallpapers/Meteora/contents/images"
-install -m 0644 assets/meteora-wallpaper.png "$HOME/.local/share/wallpapers/Meteora/contents/images/meteora-wallpaper.png"
+sudo pacman -S --needed plasma-meta sddm breeze-icons xdg-desktop-portal-kde qt6-base qt6-wayland cmake base-devel
+bash install-meteora-plasma.sh --install-only
 echo
-echo "KDE Plasma installed; Meteora wallpaper staged for this user."
+echo "KDE Plasma installed; Meteora Global Theme, palette, icon and wallpaper staged for this user."
 echo "No session/login changes made. To try Plasma safely, use your existing session chooser."
 echo "For a clean Arch TTY, you may optionally enable SDDM yourself:"
 echo "  sudo systemctl enable --now sddm"
-echo "This is a KDE-backed foundation, not yet a completed Meteora Plasma theme."
+echo "After login to KDE Plasma, run: bash install-meteora-plasma.sh --apply"
