@@ -30,6 +30,9 @@
 #include <QSizePolicy>
 #include <QGraphicsOpacityEffect>
 #include <QGraphicsDropShadowEffect>
+#include <QShortcut>
+#include <QApplication>
+#include <QMouseEvent>
 #include <algorithm>
 
 struct AppEntry { QString name, exec, icon; };
@@ -58,6 +61,18 @@ class Desktop : public QWidget {
     QListWidget *list = nullptr;
     QLineEdit *search = nullptr;
     QList<AppEntry> apps;
+    void toggleLauncher() {
+        if (launcher->isVisible()) { launcher->hide(); return; }
+        refresh();
+        search->clear();
+        launcher->show();
+        launcher->raise();
+        search->setFocus();
+    }
+    void activateSelected() {
+        auto *item = list->currentItem();
+        if (item) emit list->itemActivated(item);
+    }
 public:
     Desktop() {
         setWindowTitle("Meteora Desktop");
@@ -91,11 +106,17 @@ public:
         auto *panel = new QWidget(this); panel->setObjectName("panel"); panel->setFixedHeight(56);
         auto *bar = new QHBoxLayout(panel); bar->setContentsMargins(14,5,14,5);
         auto *menu = new QPushButton("◈  Meteora", panel); menu->setObjectName("menuButton"); menu->setCursor(Qt::PointingHandCursor);
-        connect(menu, &QPushButton::clicked, this, [this]{ launcher->setVisible(!launcher->isVisible()); if (launcher->isVisible()) { refresh(); search->setFocus(); } });
+        connect(menu, &QPushButton::clicked, this, [this]{ toggleLauncher(); });
         bar->addWidget(menu); bar->addSpacing(14);
         auto *tagline = new QLabel("DESKTOP", panel); tagline->setObjectName("muted"); tagline->setStyleSheet("font-size:10px;letter-spacing:2px;"); bar->addWidget(tagline);
         
         bar->addStretch();
+        auto *closeSession = new QPushButton("Exit preview", panel);
+        closeSession->setToolTip("Close the Meteora test session (not system shutdown)");
+        closeSession->setCursor(Qt::PointingHandCursor);
+        connect(closeSession, &QPushButton::clicked, this, []{ QApplication::quit(); });
+        bar->addWidget(closeSession);
+        bar->addSpacing(14);
         auto *clock = new QLabel(panel); clock->setObjectName("clock"); bar->addWidget(clock);
         auto tick = [clock]{clock->setText(QDateTime::currentDateTime().toString("ddd  dd MMM   HH:mm"));};
         auto *timer = new QTimer(this); connect(timer, &QTimer::timeout, this, tick); timer->start(10000); tick();
@@ -105,8 +126,15 @@ public:
         auto *title = new QLabel("METEORA   /   Applications", launcher); title->setStyleSheet("font-size:16px;font-weight:700;color:#82c8ff"); layout->addWidget(title);
         search = new QLineEdit(launcher); search->setPlaceholderText("Search applications..."); search->setClearButtonEnabled(true); layout->addWidget(search);
         list = new QListWidget(launcher); list->setIconSize(QSize(24,24)); list->setSpacing(3); layout->addWidget(list);
-        auto *foot = new QLabel("Your installed applications  •  Esc to close", launcher); foot->setObjectName("muted"); foot->setStyleSheet("font-size:11px"); layout->addWidget(foot);
+        auto *foot = new QLabel("Ctrl+Space: launcher  •  Enter: open  •  Esc: close", launcher); foot->setObjectName("muted"); foot->setStyleSheet("font-size:11px"); layout->addWidget(foot);
         connect(search, &QLineEdit::textChanged, this, [this]{ populate(); });
+        connect(search, &QLineEdit::returnPressed, this, [this]{ activateSelected(); });
+        auto *shortcut = new QShortcut(QKeySequence("Ctrl+Space"), this);
+        shortcut->setContext(Qt::ApplicationShortcut);
+        connect(shortcut, &QShortcut::activated, this, [this]{ toggleLauncher(); });
+        auto *escape = new QShortcut(QKeySequence(Qt::Key_Escape), this);
+        escape->setContext(Qt::ApplicationShortcut);
+        connect(escape, &QShortcut::activated, this, [this]{ if (launcher->isVisible()) launcher->hide(); });
         connect(list, &QListWidget::itemActivated, this, [this](QListWidgetItem *item){
             int idx = item->data(Qt::UserRole).toInt();
             if (idx < 0 || idx >= apps.size()) return;
@@ -138,8 +166,13 @@ public:
             auto *item = new QListWidgetItem(QIcon::fromTheme(apps[i].icon), apps[i].name, list);
             item->setData(Qt::UserRole,i);
         }
+        if (list->count()) list->setCurrentRow(0);
     }
 protected:
+    void mousePressEvent(QMouseEvent *event) override {
+        if (launcher->isVisible() && !launcher->geometry().contains(event->pos())) launcher->hide();
+        QWidget::mousePressEvent(event);
+    }
     void resizeEvent(QResizeEvent *e) override { QWidget::resizeEvent(e); launcher->move(18,height()-56-launcher->height()-24); }
     void paintEvent(QPaintEvent *) override {
         QPainter p(this);
