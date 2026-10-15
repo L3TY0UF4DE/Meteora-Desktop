@@ -1,6 +1,6 @@
 # Meteora Desktop — Alpha 0.1 development prototype
 
-An original C++20/Qt 6 desktop *visual prototype* for Arch Linux. Not based on KDE Plasma code.
+An original C++20/Qt 6 desktop *visual prototype* for Arch Linux.
 
 ## Status
 
