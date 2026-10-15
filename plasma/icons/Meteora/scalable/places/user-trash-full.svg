@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: MIT: Meteora Desktop original icon art (user-trash-full) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs>
+<linearGradient id="folderBlue" x1="0" y1="0" x2="0.7" y2="1"><stop offset="0" stop-color="#68ceff"/><stop offset=".52" stop-color="#2388e3"/><stop offset="1" stop-color="#0b4e9d"/></linearGradient>
+<linearGradient id="folderTab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4baeff"/><stop offset="1" stop-color="#1268b5"/></linearGradient>
+</defs>
+<path d="M20 14H44" stroke="#80b6df" stroke-width="4" stroke-linecap="round"/><path d="M28 12Q28 9 31 9H34Q37 9 37 12" stroke="#d7e8f7" stroke-width="2.5" fill="none"/><path d="M14 19H50L46 54Q45 57 41 57H23Q19 57 18 54Z" fill="#3b668b" stroke="#b5cfe5" stroke-width="2"/><path d="M23 26 25 49M32 26V49M41 26 39 49" stroke="#9cc5e8" stroke-width="2.4" stroke-linecap="round"/><path d="M13 19H51" stroke="#9ec9ef" stroke-width="3"/>
+</svg>
