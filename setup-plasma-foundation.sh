@@ -8,10 +8,10 @@ cd "$(dirname "$0")"
 command -v pacman >/dev/null || { echo "pacman missing" >&2; exit 1; }
 echo "Meteora Plasma foundation installer"
 echo "Installs KDE Plasma, KWin, SDDM, Dolphin, Konsole, System Settings and Qt6 tooling."
-echo "Does NOT enable SDDM, change GRUB, replace your current session, or remove Weston."
+echo "Does NOT enable SDDM, NetworkManager, change GRUB, or replace your session."
 read -r -p "Install KDE Plasma dependencies? [y/N] " reply
 [[ "$reply" =~ ^[Yy]$ ]] || exit 0
-sudo pacman -S --needed plasma-meta sddm dolphin konsole systemsettings breeze-icons xdg-desktop-portal-kde qt6-base qt6-wayland cmake base-devel
+sudo pacman -S --needed plasma-meta sddm dolphin konsole systemsettings plasma-nm plasma-pa bluedevil breeze-icons xdg-desktop-portal-kde qt6-base qt6-wayland cmake base-devel
 bash install-meteora-plasma.sh --install-only
 echo
 echo "KDE Plasma installed; Meteora Global Theme, palette, icon and wallpaper staged for this user."
