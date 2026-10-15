@@ -10,6 +10,12 @@
         desktop.currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
         desktop.writeConfig("Image", "file://" + wallpaperPath);
         desktop.writeConfig("FillMode", 2); // Scaled and cropped to fill
+        desktop.currentConfigGroup = ["General"];
+        desktop.writeConfig("arrangement", 1); // icons top to bottom
+        desktop.writeConfig("alignment", 0); // left
+        desktop.writeConfig("iconSize", 2); // 48 px
+        desktop.writeConfig("labelWidth", 0); // narrow
+        desktop.writeConfig("sortMode", 0); // user arranged
     }
 
     // This script is applied only with explicit consent and a saved backup.
@@ -32,7 +38,8 @@
     var launcher = panel.addWidget("org.kde.plasma.kickoff");
     launcher.currentConfigGroup = ["General"];
     launcher.writeConfig("icon", "meteora");
-    launcher.writeConfig("favoritesDisplay", 0);
+    launcher.writeConfig("favoritesDisplay", 0); // icon grid
+    launcher.writeConfig("applicationsDisplay", 0); // icon grid
 
     // KDE's standard launcher mapping supports Meta/Windows on Plasma.
     // No Ctrl+Space binding is added.
