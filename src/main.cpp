@@ -128,8 +128,25 @@ public:
         auto *bar = new QHBoxLayout(panel); bar->setContentsMargins(16,6,16,6);
         auto *menu = new QPushButton("◈  Meteora", panel); menu->setObjectName("menuButton"); menu->setCursor(Qt::PointingHandCursor);
         connect(menu, &QPushButton::clicked, this, [this]{ toggleLauncher(); });
-        bar->addWidget(menu); bar->addSpacing(14);
-        auto *tagline = new QLabel("DESKTOP", panel); tagline->setObjectName("muted"); tagline->setStyleSheet("font-size:10px;letter-spacing:2px;"); bar->addWidget(tagline);
+        bar->addWidget(menu); bar->addSpacing(12);
+        auto *home = new QPushButton("⌂", panel);
+        home->setToolTip("Open Home");
+        connect(home, &QPushButton::clicked, this, [] {
+            QProcess::startDetached("xdg-open", {QDir::homePath()});
+        });
+        bar->addWidget(home);
+        auto *terminal = new QPushButton(">_", panel);
+        terminal->setToolTip("Open terminal");
+        connect(terminal, &QPushButton::clicked, this, [] {
+            for (const QString &name : {"foot", "konsole", "alacritty", "kitty", "xterm"}) {
+                if (!QStandardPaths::findExecutable(name).isEmpty()) {
+                    QProcess::startDetached(name, {});
+                    return;
+                }
+            }
+        });
+        bar->addWidget(terminal);
+
         
         bar->addStretch();
         auto *settingsButton = new QPushButton("⚙  Settings", panel);
@@ -168,7 +185,7 @@ public:
         auto *body = new QHBoxLayout;
         categories = new QListWidget(launcher);
         categories->setFixedWidth(170);
-        categories->addItems({"Favorites","All Applications","Settings"});
+        categories->addItems({"Quick Access","All Applications","Settings"});
         categories->setCurrentRow(0);
         body->addWidget(categories);
         list = new QListWidget(launcher);
