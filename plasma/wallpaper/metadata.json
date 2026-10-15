@@ -1,0 +1,15 @@
+{
+  "KPackageStructure": "Wallpaper/Images",
+  "KPlugin": {
+    "Id": "Meteora",
+    "Name": "Meteora — Original",
+    "Description": "Original Meteora Desktop artwork",
+    "License": "Proprietary project artwork (see repository README)",
+    "Authors": [
+      {
+        "Name": "Meteora Desktop project"
+      }
+    ]
+  },
+  "X-KDE-PlasmaImageWallpaper-AccentColor": "#3195ef"
+}
