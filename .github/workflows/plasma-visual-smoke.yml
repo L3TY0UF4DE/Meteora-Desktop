@@ -25,7 +25,7 @@ jobs:
             plasma-desktop plasma-workspace kwin-x11 breeze breeze-icon-theme \
             dolphin konsole systemsettings desktop-file-utils xdg-utils \
             dbus-x11 xvfb xauth x11-utils xdotool imagemagick libgl1-mesa-dri libnotify-bin \
-            firefox-esr plasma-discover kate kcalc kclock plasma-systemmonitor spectacle kdenlive
+            firefox-esr plasma-discover kate kcalc kclock plasma-systemmonitor kde-spectacle kdenlive
       - name: Create isolated desktop test user and install Meteora
         run: |
           useradd --create-home --shell /bin/bash meteora-ci
