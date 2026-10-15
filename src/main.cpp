@@ -36,6 +36,7 @@
 #include <QListView>
 #include <QToolButton>
 #include <QFileIconProvider>
+#include <QCommandLineParser>
 #include <algorithm>
 
 struct AppEntry { QString name, exec, icon; };
@@ -84,6 +85,7 @@ class Desktop : public QWidget {
         if (item) emit list->itemActivated(item);
     }
 public:
+    void showLauncherForCapture() { toggleLauncher(); }
     Desktop() {
         qApp->installEventFilter(this);
         setWindowTitle("Meteora Desktop");
@@ -332,8 +334,24 @@ protected:
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
     app.setApplicationName("Meteora Desktop Preview");
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    QCommandLineOption captureOption("capture", "Save a preview PNG and exit.", "path");
+    parser.addOption(captureOption);
+    parser.process(app);
     Desktop desktop;
-    // Maximized frameless avoids some virtualized Wayland fullscreen pointer issues.
-    desktop.showMaximized();
+    if (parser.isSet(captureOption)) {
+        desktop.resize(1440, 900);
+        desktop.show();
+        QTimer::singleShot(500, &desktop, [&desktop, &app, &parser] {
+            desktop.showLauncherForCapture();
+            QTimer::singleShot(350, &desktop, [&desktop, &app, &parser] {
+                const bool ok = desktop.grab().save(parser.value("capture"), "PNG");
+                app.exit(ok ? 0 : 1);
+            });
+        });
+    } else {
+        desktop.showMaximized();
+    }
     return app.exec();
 }
