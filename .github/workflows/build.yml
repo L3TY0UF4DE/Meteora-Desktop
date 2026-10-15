@@ -1,0 +1,24 @@
+name: Build Meteora Preview
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+
+jobs:
+  linux-build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Qt 6 and build tools
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++ qt6-base-dev
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --parallel 2
+      - name: Upload compiled preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: meteora-preview-linux
+          path: build/meteora-preview
+          if-no-files-found: error
