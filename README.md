@@ -1,22 +1,71 @@
-# Meteora Desktop — KDE Plasma transition (work in progress)
+# Meteora Desktop — Plasma 6 Preview
 
-**Direction change:** Meteora is moving from a standalone Qt/Weston proof of concept to a custom KDE Plasma-based desktop. KDE Plasma and KWin will provide real Wayland window management, task switching, workspaces, notifications, system tray, and session infrastructure. Meteora will provide its own original appearance, layout, settings integration and artwork.
+Meteora is a charcoal-and-ice-blue, Linkin Park *Meteora*-inspired
+desktop experience for Arch Linux. We use **upstream KDE Plasma 6 + KWin**
+for the actual Wayland desktop and supply **original Meteora branding,
+wallpaper, colors, Plasma-style graphics, layout and setup tooling**.
 
-This is **not a finished Plasma theme or desktop distribution**. The old preview is preserved for reference and does not become a Plasma shell merely by installing Plasma.
+The previous self-contained Qt/Weston mock desktop remains under the
+legacy preview section below; it is **not** the new installation path.
 
-## Opt-in Arch foundation
+## What's working in the KDE-backed build
 
-From a local clone on Arch Linux, run:
+- Native KWin window management, virtual desktops, Alt+Tab, Wayland support.
+- Plasma notifications, system tray, search/application launcher, desktop icons.
+- Meteora Dark color scheme, original angular icon, wallpaper image package.
+- **Meteora Plasma style** with original dark blue bordered panel and popup graphics.
+- Floating bottom panel with native Kickoff, task manager, pager, clock and tray.
+- User-local installer with backup and `--restore` option.
+- Native System Settings shortcut, rather than the old Qt preview's wallpaper-only dialog.
+
+We do **not** claim the visual design is pixel-perfect yet. This release
+needs real Arch/UTM Plasma runtime validation, especially launcher placement
+and the Wayland graphics stack.
+
+## Arch installation
+
+For a clean Arch system, from a clone of the `development` branch:
 
 ```bash
 bash setup-plasma-foundation.sh
 ```
 
-The script asks permission before installing KDE Plasma dependencies and stages the Meteora wallpaper in the current user's home directory. It **does not** enable SDDM, change your bootloader, or overwrite your current desktop configuration. Once packages are installed, you can select Plasma in a login manager. On a clean Arch TTY, enabling SDDM is a separate, explicit decision.
+The setup asks before running pacman, stages the Meteora theme, and does
+**not** enable SDDM or modify GRUB. You can enable SDDM yourself if needed
+with `sudo systemctl enable --now sddm`, then choose **Plasma (Wayland)**.
 
-## Upstream code and licensing
+After signing in to Plasma, in this repository run:
 
-KDE Plasma/KWin are used as independently installed upstream components under their own GPL/LGPL and other applicable licenses; no KDE source code has been copied into this repository. Any future copied or modified KDE files must retain their applicable notices and licenses. The repository's MIT license applies only to original Meteora code, not upstream KDE code or the wallpaper.
+```bash
+bash install-meteora-plasma.sh --apply
+```
+
+Type `METEORA` after reviewing the panel replacement warning. Existing
+Plasma settings are saved to `~/.local/state/meteora/backups/` first.
+Wallpaper files, user applications and existing desktop items are not removed.
+
+To restore the saved Plasma settings and log back in:
+
+```bash
+bash install-meteora-plasma.sh --restore
+```
+
+Theme source, screenshots/design guide, and detailed setup notes are in
+[plasma/README.md](plasma/README.md) and [plasma/DESIGN.md](plasma/DESIGN.md).
+
+## Developer checks
+
+GitHub Actions validates Bash syntax, Plasma layout JS syntax, theme/wallpaper
+manifests, SVG structures and fake-session install/apply/restore behavior.
+Qt prototype compilation still runs separately. These are not a substitute
+for testing in Plasma on Arch Linux.
+
+## Licensing
+
+Original Meteora scripts, app metadata, vectors and theme colors are under
+MIT. KDE Plasma/KWin remain separately installed open-source KDE packages
+under their own upstream licenses, and are not copied or relicensed by Meteora.
+The original Meteora wallpaper is separately licensed artwork, not MIT code.
 
 ## Legacy Qt preview
 
