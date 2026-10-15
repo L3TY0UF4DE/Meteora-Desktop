@@ -54,6 +54,7 @@ install_theme() {
     cp -R "$root/plasma/desktoptheme/Meteora/." "$data_home/plasma/desktoptheme/Meteora/"
     install -m 0644 "$root/plasma/color-schemes/MeteoraDark.colors" "$data_home/color-schemes/MeteoraDark.colors"
     install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/images/meteora-wallpaper.png"
+    install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/screenshot.png"
     install -m 0644 "$root/plasma/wallpaper/metadata.json" "$data_home/wallpapers/Meteora/metadata.json"
     install -m 0644 "$root/plasma/icons/meteora.svg" "$data_home/icons/hicolor/scalable/apps/meteora.svg"
     install -m 0644 "$root/plasma/applications/org.meteora.settings.desktop" "$data_home/applications/meteora-settings.desktop"
@@ -168,6 +169,9 @@ case "$mode" in
         plasma-apply-colorscheme MeteoraDark
         if command -v plasma-apply-desktoptheme >/dev/null 2>&1; then
             plasma-apply-desktoptheme Meteora
+        fi
+        if command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
+            plasma-apply-wallpaperimage "$data_home/wallpapers/Meteora/contents/images/meteora-wallpaper.png"
         fi
         create_desktop_shortcuts
         echo "Meteora Plasma layout applied. Log out and back in if icons or panels do not update."
