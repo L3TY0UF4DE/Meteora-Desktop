@@ -104,8 +104,8 @@ public:
         connect(wallpaperTimer, &QTimer::timeout, this, updateWallpaper);
         wallpaperTimer->start(1500);
         setStyleSheet(R"(
-            QWidget#panel { background:#141d29; border:1px solid #35516c; border-radius:17px; }
-            QWidget#launcher { background:#121b28; border:1px solid #416487; border-radius:18px; }
+            QWidget#panel { background:#141d29; border:1px solid #35516c; border-radius:20px; }
+            QWidget#launcher { background:#121b28; border:1px solid #416487; border-radius:22px; }
             QPushButton { color:#e8f2ff; background:#25384d; border:1px solid #354e68; border-radius:10px; padding:9px 16px; font-weight:600; }
             QPushButton:hover { background:#315a80; border-color:#56a7ee; }
             QPushButton#menuButton { background:#214466; border:1px solid #3989c6; font-weight:700; }
@@ -120,9 +120,9 @@ public:
             QListWidget::item:selected { background:#27557b; }
         )");
         auto *root = new QVBoxLayout(this);
-        root->setContentsMargins(18,0,18,14);
+        root->setContentsMargins(22,0,22,18);
         root->addStretch();
-        auto *panel = new QWidget(this); panel->setObjectName("panel"); panel->setFixedHeight(56);
+        auto *panel = new QWidget(this); panel->setObjectName("panel"); panel->setFixedHeight(60);
         auto *bar = new QHBoxLayout(panel); bar->setContentsMargins(14,5,14,5);
         auto *menu = new QPushButton("◈  Meteora", panel); menu->setObjectName("menuButton"); menu->setCursor(Qt::PointingHandCursor);
         connect(menu, &QPushButton::clicked, this, [this]{ toggleLauncher(); });
@@ -151,8 +151,8 @@ public:
         auto tick = [clock]{clock->setText(QDateTime::currentDateTime().toString("ddd  dd MMM   HH:mm"));};
         auto *timer = new QTimer(this); connect(timer, &QTimer::timeout, this, tick); timer->start(10000); tick();
         root->addWidget(panel);
-        launcher = new QWidget(this); launcher->setObjectName("launcher"); launcher->setFixedSize(410,460); launcher->hide();
-        auto *layout = new QVBoxLayout(launcher); layout->setContentsMargins(20,20,20,18); layout->setSpacing(12);
+        launcher = new QWidget(this); launcher->setObjectName("launcher"); launcher->setFixedSize(430,480); launcher->hide();
+        auto *layout = new QVBoxLayout(launcher); layout->setContentsMargins(24,24,24,20); layout->setSpacing(12);
         auto *title = new QLabel("METEORA   /   Applications", launcher); title->setStyleSheet("font-size:16px;font-weight:700;color:#82c8ff"); layout->addWidget(title);
         search = new QLineEdit(launcher); search->setPlaceholderText("Search applications..."); search->setClearButtonEnabled(true); layout->addWidget(search);
         list = new QListWidget(launcher); list->setIconSize(QSize(24,24)); list->setSpacing(3); layout->addWidget(list);
@@ -178,10 +178,10 @@ public:
             launcher->hide();
         });
         auto *panelShadow = new QGraphicsDropShadowEffect(panel);
-        panelShadow->setBlurRadius(28); panelShadow->setOffset(0,4);
+        panelShadow->setBlurRadius(36); panelShadow->setOffset(0,4);
         panelShadow->setColor(QColor(0,0,0,140)); panel->setGraphicsEffect(panelShadow);
         auto *launcherShadow = new QGraphicsDropShadowEffect(launcher);
-        launcherShadow->setBlurRadius(32); launcherShadow->setOffset(0,8);
+        launcherShadow->setBlurRadius(44); launcherShadow->setOffset(0,8);
         launcherShadow->setColor(QColor(0,0,0,170)); launcher->setGraphicsEffect(launcherShadow);
         refresh();
     }
@@ -225,7 +225,7 @@ protected:
         if (launcher->isVisible() && !launcher->geometry().contains(event->pos())) launcher->hide();
         QWidget::mousePressEvent(event);
     }
-    void resizeEvent(QResizeEvent *e) override { QWidget::resizeEvent(e); launcher->move(18,height()-56-launcher->height()-24); }
+    void resizeEvent(QResizeEvent *e) override { QWidget::resizeEvent(e); launcher->move(22,height()-60-launcher->height()-30); }
     void paintEvent(QPaintEvent *) override {
         QPainter p(this);
         p.fillRect(rect(), QColor("#10151c"));
