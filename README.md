@@ -40,6 +40,23 @@ or modify GRUB. Requires working DRM/KMS graphics, an active local seat and
 a valid `XDG_RUNTIME_DIR`. Virtual machines or some GPU setups may fail.
 The script configures a visible cursor theme and logs compositor startup failures. On UTM, ensure the VM has a USB tablet or compatible pointing device. Close the preview with Alt+F4 (or switch TTY). If it fails, share the terminal error; do not run the script as root.
 
+## Meteora Settings
+
+The native `meteora-settings` app is built alongside the desktop preview.
+It currently supports selecting a wallpaper and restoring the default artwork;
+changes are saved per user and picked up by the preview automatically.
+
+The TTY setup script installs **both** executables, the Settings launcher entry,
+and the default wallpaper to `~/.local` after its existing confirmation prompt.
+No root-level desktop installation or SDDM/GRUB changes are performed.
+Open Settings using the panel button or application launcher.
+
+For a manual user-local install after building:
+
+```bash
+cmake --install build --prefix "$HOME/.local"
+```
+
 ## Preview controls
 
 - Click **Meteora** or press **Super** (Windows key, or Command when forwarded by UTM) to toggle the application launcher.
