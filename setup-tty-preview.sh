@@ -30,9 +30,9 @@ fi
 if [[ ! -d "$XDG_RUNTIME_DIR" || ! -w "$XDG_RUNTIME_DIR" ]]; then
   echo "XDG_RUNTIME_DIR is not writable: $XDG_RUNTIME_DIR" >&2; exit 1
 fi
-echo "Starting temporary Weston compositor. Close Meteora preview to return to TTY."
+echo "Starting temporary Weston desktop shell with pointer support. Close Meteora preview to return to TTY."
 socket="meteora-preview-$"
-weston --backend=drm --shell=kiosk-shell.so --socket="$socket" &
+weston --backend=drm --shell=desktop-shell.so --socket="$socket" &
 weston_pid=$!
 cleanup() { kill "$weston_pid" 2>/dev/null || true; wait "$weston_pid" 2>/dev/null || true; }
 trap cleanup EXIT INT TERM
