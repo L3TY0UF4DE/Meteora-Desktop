@@ -40,6 +40,19 @@ or modify GRUB. Requires working DRM/KMS graphics, an active local seat and
 a valid `XDG_RUNTIME_DIR`. Virtual machines or some GPU setups may fail.
 The script configures a visible cursor theme and logs compositor startup failures. On UTM, ensure the VM has a USB tablet or compatible pointing device. Close the preview with Alt+F4 (or switch TTY). If it fails, share the terminal error; do not run the script as root.
 
+## Preview controls
+
+- Click **Meteora** or press **Ctrl+Space** to toggle the application launcher.
+- Type to filter installed applications; press **Enter** to launch the selected result.
+- Press **Escape** or click outside the launcher to dismiss it.
+- Click **Exit preview** to return to the TTY testing session.
+- These shortcuts are handled by the preview while it has keyboard focus, not globally by a standalone compositor.
+
+The preview is still a Qt client hosted by temporary Weston. It does not provide
+a real task manager, independent window management, system tray, notifications,
+or a production-ready desktop session. No third-party desktop source code is
+copied into the Meteora shell.
+
 ## Roadmap
 
 1. Preview: branded wallpaper, basic panel, launcher (this package).
