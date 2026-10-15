@@ -1,10 +1,10 @@
-# Meteora Desktop — Alpha 0.1 development prototype
+# Meteora Desktop — Alpha 0.2 visual preview
 
 An original C++20/Qt 6 desktop *visual prototype* for Arch Linux.
 
 ## Status
 
-**NOT A DESKTOP SESSION.** This is a normal window running inside your current desktop environment. It demonstrates the wallpaper, charcoal/blue styling, panel, clock and installed-application launcher. It does not manage windows, own the Wayland display, provide desktop icons, a system tray, settings, SDDM integration, or a GRUB theme. No bare-metal install script is provided yet, intentionally.
+**NOT A DESKTOP SESSION.** This is a normal window running inside your current desktop environment. It demonstrates the wallpaper, charcoal/blue styling, floating panel, clock and installed-application launcher. The preview now opens fullscreen without a window title bar; close it with Alt+F4 or switch to a TTY. It does not manage windows, own the Wayland display, provide desktop icons, a system tray, settings, SDDM integration, or a GRUB theme. No bare-metal install script is provided yet, intentionally.
 
 ## Test safely on Arch Linux
 
