@@ -143,7 +143,7 @@ public:
         for (const auto &folder : folders) {
             auto *button = new QToolButton(desktopShortcuts);
             button->setText(folder.first);
-            button->setIcon(iconProvider.icon(QFileInfo(folder.second)));
+            button->setIcon(QIcon::fromTheme("folder", iconProvider.icon(QFileInfo(QDir::homePath()))));
             button->setIconSize(QSize(36,36));
             button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
             button->setFixedSize(96,82);
@@ -279,7 +279,10 @@ public:
             if (!apps[i].name.contains(search->text(), Qt::CaseInsensitive)) continue;
             if (search->text().isEmpty() && categories->currentRow() == 0 && shown >= 12) break;
             if (search->text().isEmpty() && categories->currentRow() == 2 && !apps[i].name.contains("settings", Qt::CaseInsensitive)) continue;
-            auto *item = new QListWidgetItem(QIcon::fromTheme(apps[i].icon), apps[i].name, list);
+            QIcon appIcon = QIcon::fromTheme(apps[i].icon);
+            if (appIcon.isNull()) appIcon = QIcon::fromTheme("application-x-executable");
+            if (appIcon.isNull()) appIcon = style()->standardIcon(QStyle::SP_FileIcon);
+            auto *item = new QListWidgetItem(appIcon, apps[i].name, list);
             item->setData(Qt::UserRole,i);
             ++shown;
         }
@@ -315,7 +318,7 @@ protected:
         if (launcher->isVisible() && !launcher->geometry().contains(event->pos())) launcher->hide();
         QWidget::mousePressEvent(event);
     }
-    void resizeEvent(QResizeEvent *e) override { QWidget::resizeEvent(e); launcher->move(20,qMax(12,height()-48-launcher->height()-24)); }
+    void resizeEvent(QResizeEvent *e) override { QWidget::resizeEvent(e); launcher->move(qMax(12,width()-launcher->width()-20), 38); }
     void paintEvent(QPaintEvent *) override {
         QPainter p(this);
         p.fillRect(rect(), QColor("#10151c"));
