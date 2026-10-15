@@ -16,6 +16,16 @@ jobs:
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build --parallel 2
+      - name: Render reference screenshot
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: ./build/meteora-preview --capture meteora-preview-reference.png
+      - name: Upload design screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: meteora-design-screenshot
+          path: meteora-preview-reference.png
+          if-no-files-found: error
       - name: Upload compiled preview
         uses: actions/upload-artifact@v4
         with:
