@@ -38,6 +38,8 @@
 struct AppEntry { QString name, exec, icon; };
 static QList<AppEntry> discoverApps() {
     QList<AppEntry> apps;
+    QString defaultWallpaper;
+    QString activeWallpaper;
     QStringList dirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
     dirs.removeDuplicates();
     for (const QString &dir : dirs) {
@@ -86,7 +88,21 @@ public:
         QString asset = QCoreApplication::applicationDirPath() + "/../share/meteora/meteora-wallpaper.png";
         if (!QFile::exists(asset)) asset = QCoreApplication::applicationDirPath() + "/assets/meteora-wallpaper.png";
         if (!QFile::exists(asset)) asset = QDir::currentPath() + "/assets/meteora-wallpaper.png";
-        wallpaper.load(asset);
+        defaultWallpaper = asset;
+        auto updateWallpaper = [this] {
+            QSettings settings("Meteora", "Desktop");
+            QString custom = settings.value("appearance/wallpaper").toString();
+            QString desired = (!custom.isEmpty() && QFile::exists(custom)) ? custom : defaultWallpaper;
+            if (desired != activeWallpaper) {
+                activeWallpaper = desired;
+                wallpaper.load(desired);
+                update();
+            }
+        };
+        updateWallpaper();
+        auto *wallpaperTimer = new QTimer(this);
+        connect(wallpaperTimer, &QTimer::timeout, this, updateWallpaper);
+        wallpaperTimer->start(1500);
         setStyleSheet(R"(
             QWidget#panel { background:#141d29; border:1px solid #35516c; border-radius:17px; }
             QWidget#launcher { background:#121b28; border:1px solid #416487; border-radius:18px; }
@@ -114,6 +130,17 @@ public:
         auto *tagline = new QLabel("DESKTOP", panel); tagline->setObjectName("muted"); tagline->setStyleSheet("font-size:10px;letter-spacing:2px;"); bar->addWidget(tagline);
         
         bar->addStretch();
+        auto *settingsButton = new QPushButton("⚙  Settings", panel);
+        settingsButton->setCursor(Qt::PointingHandCursor);
+        settingsButton->setToolTip("Open Meteora Settings");
+        connect(settingsButton, &QPushButton::clicked, this, [this] {
+            const QString sibling = QCoreApplication::applicationDirPath() + "/meteora-settings";
+            const QString program = QFile::exists(sibling) ? sibling : "meteora-settings";
+            if (!QProcess::startDetached(program, {}))
+                QMessageBox::warning(this, "Meteora Settings", "Unable to start meteora-settings.");
+        });
+        bar->addWidget(settingsButton);
+        bar->addSpacing(10);
         auto *closeSession = new QPushButton("Exit preview", panel);
         closeSession->setToolTip("Close the Meteora test session (not system shutdown)");
         closeSession->setCursor(Qt::PointingHandCursor);
