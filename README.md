@@ -10,12 +10,17 @@ An original C++20/Qt 6 desktop *visual prototype* for Arch Linux.
 
 ```bash
 sudo pacman -S --needed base-devel cmake qt6-base git
-unzip meteora-desktop-alpha01.zip
-cd meteora-desktop-alpha01
+git clone -b development https://github.com/L3TY0UF4DE/Meteora-Desktop.git
+cd Meteora-Desktop
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j"$(nproc)"
 ./build/meteora-preview
 ```
+
+Alternatively, from this cloned repository run `bash test-preview.sh` to configure, build, and launch the preview. This does not install a desktop session or change SDDM/GRUB.
+
+GitHub Actions builds the preview on Ubuntu for an automated compile check; this does not replace testing on Arch Linux.
+
 
 Run it **from your existing desktop session**. It will not change your login manager, bootloader, or system configuration. Launcher behavior is basic and does not yet implement the full Desktop Entry Exec specification; some applications may not launch correctly.
 
