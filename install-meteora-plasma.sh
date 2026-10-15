@@ -48,12 +48,15 @@ need_plasma() {
 
 install_theme() {
     local destination="$data_home/plasma/look-and-feel/$theme_id"
-    install -d "$destination" "$data_home/color-schemes" "$data_home/wallpapers/Meteora/contents/images"
-    install -d "$data_home/icons/hicolor/scalable/apps" "$data_home/applications" "$data_home/plasma/desktoptheme/Meteora" "$data_home/plasma/plasmoids/org.meteora.launcher"
+    install -d "$destination" "$data_home/plasma/look-and-feel/org.meteora.light" "$data_home/color-schemes" "$data_home/wallpapers/Meteora/contents/images"
+    install -d "$data_home/icons/hicolor/scalable/apps" "$data_home/applications" "$data_home/plasma/desktoptheme/Meteora" "$data_home/plasma/plasmoids/org.meteora.launcher" "$data_home/plasma/desktoptheme/Meteora-Light"
     cp -R "$root/plasma/look-and-feel/$theme_id/." "$destination/"
+    cp -R "$root/plasma/look-and-feel/org.meteora.light/." "$data_home/plasma/look-and-feel/org.meteora.light/"
     cp -R "$root/plasma/desktoptheme/Meteora/." "$data_home/plasma/desktoptheme/Meteora/"
+    cp -R "$root/plasma/desktoptheme/Meteora-Light/." "$data_home/plasma/desktoptheme/Meteora-Light/"
     cp -R "$root/plasma/applets/org.meteora.launcher/." "$data_home/plasma/plasmoids/org.meteora.launcher/"
     install -m 0644 "$root/plasma/color-schemes/MeteoraDark.colors" "$data_home/color-schemes/MeteoraDark.colors"
+    install -m 0644 "$root/plasma/color-schemes/MeteoraLight.colors" "$data_home/color-schemes/MeteoraLight.colors"
     install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/images/meteora-wallpaper.png"
     install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/screenshot.png"
     install -m 0644 "$root/plasma/wallpaper/metadata.json" "$data_home/wallpapers/Meteora/metadata.json"
