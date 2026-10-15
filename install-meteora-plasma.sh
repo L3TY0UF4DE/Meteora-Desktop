@@ -49,16 +49,17 @@ need_plasma() {
 install_theme() {
     local destination="$data_home/plasma/look-and-feel/$theme_id"
     install -d "$destination" "$data_home/color-schemes" "$data_home/wallpapers/Meteora/contents/images"
-    install -d "$data_home/icons/hicolor/scalable/apps" "$data_home/applications" "$data_home/plasma/desktoptheme/Meteora"
+    install -d "$data_home/icons/hicolor/scalable/apps" "$data_home/applications" "$data_home/plasma/desktoptheme/Meteora" "$data_home/plasma/plasmoids/org.meteora.launcher"
     cp -R "$root/plasma/look-and-feel/$theme_id/." "$destination/"
     cp -R "$root/plasma/desktoptheme/Meteora/." "$data_home/plasma/desktoptheme/Meteora/"
+    cp -R "$root/plasma/applets/org.meteora.launcher/." "$data_home/plasma/plasmoids/org.meteora.launcher/"
     install -m 0644 "$root/plasma/color-schemes/MeteoraDark.colors" "$data_home/color-schemes/MeteoraDark.colors"
     install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/images/meteora-wallpaper.png"
     install -m 0644 "$root/assets/meteora-wallpaper.png" "$data_home/wallpapers/Meteora/contents/screenshot.png"
     install -m 0644 "$root/plasma/wallpaper/metadata.json" "$data_home/wallpapers/Meteora/metadata.json"
     install -m 0644 "$root/plasma/icons/meteora.svg" "$data_home/icons/hicolor/scalable/apps/meteora.svg"
     install -m 0644 "$root/plasma/applications/org.meteora.settings.desktop" "$data_home/applications/meteora-settings.desktop"
-    echo "Installed Meteora Plasma assets for $USER."
+    echo "Installed Meteora Plasma assets and KDE-derived launcher for $USER."
 }
 
 backup_config() {
