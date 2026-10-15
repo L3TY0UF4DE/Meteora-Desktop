@@ -1,0 +1,108 @@
+name: Plasma 6 Headless Visual Smoke
+
+on:
+  push:
+    branches: [development]
+    paths:
+      - 'plasma/**'
+      - 'install-meteora-plasma.sh'
+      - '.github/workflows/plasma-visual-smoke.yml'
+  workflow_dispatch:
+
+jobs:
+  plasma6-render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    container:
+      image: debian:trixie
+      options: --shm-size=1g
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native Plasma 6 and virtual display
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            plasma-desktop plasma-workspace kwin-x11 breeze breeze-icon-theme \
+            dolphin konsole systemsettings desktop-file-utils xdg-utils \
+            libkf6dbusaddons-bin libkf6config-bin kglobalacceld dbus-x11 xvfb xauth x11-utils xdotool imagemagick libgl1-mesa-dri libnotify-bin \
+            firefox-esr plasma-discover kate kcalc kclock plasma-systemmonitor kde-spectacle kdenlive
+      - name: Create isolated desktop test user and install Meteora
+        run: |
+          useradd --create-home --shell /bin/bash meteora-ci
+          chown -R meteora-ci:meteora-ci "$GITHUB_WORKSPACE"
+          runuser -u meteora-ci -- bash install-meteora-plasma.sh --install-only
+          install -d /home/meteora-ci/Documents /home/meteora-ci/Downloads
+          chown -R meteora-ci:meteora-ci /home/meteora-ci/Documents /home/meteora-ci/Downloads
+      - name: Render live KDE Plasma 6 at 1440x900
+        run: |
+          cat > /tmp/render-meteora.sh <<'SCRIPT'
+          #!/usr/bin/env bash
+          set -Eeuo pipefail
+          cd "$1"
+          export XDG_CURRENT_DESKTOP=KDE
+          export XDG_SESSION_DESKTOP=plasma
+          export XDG_SESSION_TYPE=x11
+          export XDG_MENU_PREFIX=plasma-
+          export LIBGL_ALWAYS_SOFTWARE=1
+          export QT_QUICK_BACKEND=software
+          export QT_XCB_GL_INTEGRATION=xcb_glx
+          export LANG=C.UTF-8
+          export QT_LOGGING_RULES='*.debug=false'
+          export XDG_RUNTIME_DIR="$(mktemp -d)"
+          chmod 700 "$XDG_RUNTIME_DIR"
+          startplasma-x11 > "$PWD/plasma-headless.log" 2>&1 &
+          session_pid=$!
+          trap 'kill "$session_pid" 2>/dev/null || true; rm -rf "$XDG_RUNTIME_DIR"' EXIT
+          sleep 12
+          printf 'METEORA\n' | bash install-meteora-plasma.sh --apply
+          sleep 12
+          # Recreate the shell after theme changes to verify persistent configuration.
+          kquitapp6 plasmashell
+          sleep 2
+          plasmashell --replace >> "$PWD/plasma-headless.log" 2>&1 &
+          sleep 8
+          icon_theme=$(kreadconfig6 --file kdeglobals --group Icons --key Theme)
+          echo "Persisted icon theme: $icon_theme"
+          test "$icon_theme" = Meteora
+          # Toggle Kickoff through its panel location for a real popup screenshot.
+          xdotool mousemove 40 868 click 1 || true
+          sleep 3
+          import -window root -display "$DISPLAY" -quality 92 "$PWD/meteora-plasma-live.png"
+          test -s "$PWD/meteora-plasma-live.png"
+          xdotool key Escape
+          dolphin --new-window "$HOME" > "$PWD/dolphin.log" 2>&1 &
+          dolphin_id=$(timeout 30s xdotool search --sync --onlyvisible --class dolphin | head -1)
+          xdotool windowsize "$dolphin_id" 650 470 windowmove "$dolphin_id" 30 100
+          konsole --separate > "$PWD/konsole.log" 2>&1 &
+          konsole_id=$(timeout 30s xdotool search --sync --onlyvisible --class konsole | head -1)
+          xdotool windowsize "$konsole_id" 650 470 windowmove "$konsole_id" 740 100
+          sleep 4
+          import -window root "$PWD/meteora-windows.png"
+          systemsettings > "$PWD/settings.log" 2>&1 &
+          settings_id=$(timeout 30s xdotool search --sync --onlyvisible --class systemsettings | head -1)
+          xdotool windowsize "$settings_id" 900 650 windowmove "$settings_id" 270 60
+          sleep 4
+          import -window root "$PWD/meteora-settings.png"
+          notify-send --app-name=Meteora --icon=meteora 'Meteora Desktop' 'Native Plasma notifications are working.'
+          sleep 2
+          import -window root "$PWD/meteora-notification.png"
+          if grep -E 'error when loading applet "org.meteora.launcher"|org.meteora.launcher/contents/ui/.*Cannot assign|org.meteora.launcher/contents/ui/.*is not a type' "$PWD/plasma-headless.log"; then
+            echo "Meteora launcher QML failed to load." >&2
+            exit 1
+          fi
+          SCRIPT
+          chmod 755 /tmp/render-meteora.sh
+          runuser -u meteora-ci -- xvfb-run -a -s '-screen 0 1440x900x24' \
+            dbus-run-session -- bash /tmp/render-meteora.sh "$GITHUB_WORKSPACE"
+      - name: Upload rendered Plasma screenshot and diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: meteora-plasma6-live-render
+          path: |
+            meteora-*.png
+            *-headless.log
+            dolphin.log
+            konsole.log
+            settings.log
+          if-no-files-found: warn

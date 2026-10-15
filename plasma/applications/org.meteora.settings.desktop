@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Meteora Settings
+GenericName=Desktop Settings
+Comment=Configure the KDE Plasma desktop powering Meteora
+Exec=systemsettings
+Icon=preferences-system
+Terminal=false
+Categories=Settings;System;Qt;
+OnlyShowIn=KDE;
+StartupNotify=true

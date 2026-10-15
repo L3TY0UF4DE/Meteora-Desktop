@@ -1,0 +1,21 @@
+{
+  "KPackageStructure": "Plasma/LookAndFeel",
+  "KPlugin": {
+    "Id": "org.meteora.desktop",
+    "Name": "Meteora Desktop",
+    "Description": "Dark blue Meteora desktop layout and appearance for KDE Plasma 6",
+    "Category": "Plasma Look And Feel",
+    "Version": "0.3.0",
+    "License": "MIT",
+    "Website": "https://github.com/L3TY0UF4DE/Meteora-Desktop",
+    "Authors": [
+      {
+        "Name": "Meteora Desktop contributors"
+      }
+    ],
+    "ServiceTypes": [
+      "Plasma/LookAndFeel"
+    ],
+    "EnabledByDefault": true
+  }
+}

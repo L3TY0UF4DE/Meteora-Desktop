@@ -1,0 +1,16 @@
+{
+  "KPackageStructure": "Plasma/Theme",
+  "KPlugin": {
+    "Id": "Meteora-Light",
+    "Name": "Meteora Light",
+    "Description": "Meteora bright ice-blue Plasma companion style",
+    "Version": "0.3.2",
+    "License": "MIT",
+    "Authors": [
+      {
+        "Name": "Meteora Desktop contributors"
+      }
+    ],
+    "EnabledByDefault": true
+  }
+}

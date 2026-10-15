@@ -1,0 +1,18 @@
+[Icon Theme]
+Name=Meteora
+Comment=Original Meteora blue folder and system icons
+Inherits=breeze-dark,breeze,hicolor
+Directories=scalable/places,scalable/apps
+Example=folder
+[scalable/places]
+Size=64
+Type=Scalable
+MinSize=16
+MaxSize=256
+Context=Places
+[scalable/apps]
+Size=64
+Type=Scalable
+MinSize=16
+MaxSize=256
+Context=Applications

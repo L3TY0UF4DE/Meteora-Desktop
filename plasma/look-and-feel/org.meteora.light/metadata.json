@@ -1,0 +1,18 @@
+{
+  "KPackageStructure": "Plasma/LookAndFeel",
+  "KPlugin": {
+    "Id": "org.meteora.light",
+    "Name": "Meteora Light",
+    "Description": "Light, icy-blue companion to Meteora Desktop",
+    "Category": "Plasma Look And Feel",
+    "Version": "0.3.2",
+    "License": "MIT",
+    "Website": "https://github.com/L3TY0UF4DE/Meteora-Desktop",
+    "Authors": [
+      {
+        "Name": "Meteora Desktop contributors"
+      }
+    ],
+    "EnabledByDefault": true
+  }
+}

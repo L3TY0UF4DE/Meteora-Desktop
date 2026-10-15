@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Meteora Settings
+Comment=Configure Meteora Desktop
+Exec=meteora-settings
+Icon=preferences-system
+Terminal=false
+Categories=Settings;DesktopSettings;Qt;
+StartupNotify=true

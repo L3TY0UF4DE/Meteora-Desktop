@@ -1,0 +1,30 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Authors": [
+      {
+        "Name": "Martin Graesslin",
+        "Email": "plasma-devel@kde.org"
+      },
+      {
+        "Name": "Mikel Johnson",
+        "Email": "mikel5764@gmail.com"
+      },
+      {
+        "Name": "Meteora Desktop contributors"
+      }
+    ],
+    "Category": "Application Launchers",
+    "Description": "Meteora application launcher with KDE Kickoff search, category sidebar and icon-grid apps",
+    "EnabledByDefault": true,
+    "Icon": "meteora",
+    "Id": "org.meteora.launcher",
+    "License": "GPL-2.0-or-later",
+    "Name": "Meteora Applications",
+    "Website": "https://github.com/L3TY0UF4DE/Meteora-Desktop"
+  },
+  "X-Plasma-API-Minimum-Version": "6.0",
+  "X-Plasma-Provides": [
+    "org.kde.plasma.launchermenu"
+  ]
+}

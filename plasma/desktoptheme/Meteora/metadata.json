@@ -1,0 +1,16 @@
+{
+  "KPackageStructure": "Plasma/Theme",
+  "KPlugin": {
+    "Id": "Meteora",
+    "Name": "Meteora",
+    "Description": "Meteora navy glass Plasma style with curved panel borders",
+    "Version": "0.3.1",
+    "License": "MIT",
+    "Authors": [
+      {
+        "Name": "Meteora Desktop contributors"
+      }
+    ],
+    "EnabledByDefault": true
+  }
+}
