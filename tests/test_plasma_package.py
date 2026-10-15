@@ -23,6 +23,18 @@ class PlasmaPackageTest(unittest.TestCase):
         wallpaper = json.loads((ROOT / "plasma/wallpaper/metadata.json").read_text())
         self.assertEqual(wallpaper["KPackageStructure"], "Wallpaper/Images")
 
+    def test_native_plasma_style(self):
+        style = ROOT / "plasma/desktoptheme/Meteora"
+        manifest = json.loads((style / "metadata.json").read_text())
+        self.assertEqual(manifest["KPlugin"]["Id"], "Meteora")
+        self.assertEqual(manifest["KPackageStructure"], "Plasma/Theme")
+        for relative in ["widgets/panel-background.svg", "dialogs/background.svg"]:
+            tree = ElementTree.parse(style / relative)
+            ids = {node.attrib.get("id") for node in tree.iter()}
+            for piece in ["topleft", "top", "topright", "left", "center", "right",
+                          "bottomleft", "bottom", "bottomright"]:
+                self.assertIn(piece, ids)
+
     def test_palette(self):
         scheme = configparser.ConfigParser(interpolation=None)
         scheme.optionxform = str
@@ -93,6 +105,7 @@ class PlasmaPackageTest(unittest.TestCase):
             self.assertTrue((data / "plasma/look-and-feel/org.meteora.desktop/metadata.json").exists())
             self.assertTrue((data / "wallpapers/Meteora/contents/images/meteora-wallpaper.png").exists())
             self.assertTrue((data / "color-schemes/MeteoraDark.colors").exists())
+            self.assertTrue((data / "plasma/desktoptheme/Meteora/widgets/panel-background.svg").exists())
             self.assertTrue((data / "applications/org.meteora.settings.desktop").exists())
             self.assertFalse(log.exists(), "Installing assets must not apply Plasma settings")
 
