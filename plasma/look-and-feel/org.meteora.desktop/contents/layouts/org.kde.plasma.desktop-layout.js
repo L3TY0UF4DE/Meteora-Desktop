@@ -9,7 +9,7 @@
         desktop.wallpaperPlugin = "org.kde.image";
         desktop.currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
         desktop.writeConfig("Image", "file://" + wallpaperPath);
-        desktop.writeConfig("FillMode", 2); // Scaled and cropped to fill
+        desktop.writeConfig("FillMode", 1); // Preserve aspect ratio: keep original Meteora logo visible
         desktop.currentConfigGroup = ["General"];
         desktop.writeConfig("arrangement", 1); // icons top to bottom
         desktop.writeConfig("alignment", 0); // left
@@ -35,7 +35,8 @@
     panel.lengthMode = "fill";
     panel.hiding = "none";
 
-    var launcher = panel.addWidget("org.kde.plasma.kickoff");
+    var launcher = panel.addWidget("org.meteora.launcher");
+    launcher.globalShortcut = "Alt+F1"; // Plasma maps standalone Meta to this launcher shortcut
     launcher.currentConfigGroup = ["General"];
     launcher.writeConfig("icon", "meteora");
     launcher.writeConfig("favoritesDisplay", 0); // icon grid
