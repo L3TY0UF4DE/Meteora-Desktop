@@ -61,6 +61,8 @@ class Desktop : public QWidget {
     QListWidget *list = nullptr;
     QLineEdit *search = nullptr;
     QList<AppEntry> apps;
+    bool metaHeld = false;
+    bool metaUsedWithOtherKey = false;
     void toggleLauncher() {
         if (launcher->isVisible()) { launcher->hide(); return; }
         refresh();
@@ -75,6 +77,7 @@ class Desktop : public QWidget {
     }
 public:
     Desktop() {
+        qApp->installEventFilter(this);
         setWindowTitle("Meteora Desktop");
         setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
         setCursor(Qt::ArrowCursor);
@@ -126,7 +129,7 @@ public:
         auto *title = new QLabel("METEORA   /   Applications", launcher); title->setStyleSheet("font-size:16px;font-weight:700;color:#82c8ff"); layout->addWidget(title);
         search = new QLineEdit(launcher); search->setPlaceholderText("Search applications..."); search->setClearButtonEnabled(true); layout->addWidget(search);
         list = new QListWidget(launcher); list->setIconSize(QSize(24,24)); list->setSpacing(3); layout->addWidget(list);
-        auto *foot = new QLabel("Ctrl+Space: launcher  •  Enter: open  •  Esc: close", launcher); foot->setObjectName("muted"); foot->setStyleSheet("font-size:11px"); layout->addWidget(foot);
+        auto *foot = new QLabel("Super/Command: launcher  •  Enter: open  •  Esc: close", launcher); foot->setObjectName("muted"); foot->setStyleSheet("font-size:11px"); layout->addWidget(foot);
         connect(search, &QLineEdit::textChanged, this, [this]{ populate(); });
         connect(search, &QLineEdit::returnPressed, this, [this]{ activateSelected(); });
         auto *shortcut = new QShortcut(QKeySequence("Ctrl+Space"), this);
@@ -169,6 +172,31 @@ public:
         if (list->count()) list->setCurrentRow(0);
     }
 protected:
+    bool eventFilter(QObject *watched, QEvent *event) override {
+        if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) {
+            auto *key = static_cast<QKeyEvent *>(event);
+            if (key->key() == Qt::Key_Meta) {
+                if (!key->isAutoRepeat()) {
+                    if (event->type() == QEvent::KeyPress) {
+                        metaHeld = true;
+                        metaUsedWithOtherKey = false;
+                    } else {
+                        const bool shouldToggle = metaHeld && !metaUsedWithOtherKey;
+                        metaHeld = false;
+                        if (shouldToggle) {
+                            toggleLauncher();
+                            return true;
+                        }
+                    }
+                }
+            } else if (event->type() == QEvent::KeyPress && metaHeld) {
+                metaUsedWithOtherKey = true;
+            }
+        } else if (event->type() == QEvent::ApplicationDeactivate) {
+            metaHeld = false;
+        }
+        return QWidget::eventFilter(watched, event);
+    }
     void mousePressEvent(QMouseEvent *event) override {
         if (launcher->isVisible() && !launcher->geometry().contains(event->pos())) launcher->hide();
         QWidget::mousePressEvent(event);
