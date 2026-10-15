@@ -132,9 +132,6 @@ public:
         auto *foot = new QLabel("Super/Command: launcher  •  Enter: open  •  Esc: close", launcher); foot->setObjectName("muted"); foot->setStyleSheet("font-size:11px"); layout->addWidget(foot);
         connect(search, &QLineEdit::textChanged, this, [this]{ populate(); });
         connect(search, &QLineEdit::returnPressed, this, [this]{ activateSelected(); });
-        auto *shortcut = new QShortcut(QKeySequence("Ctrl+Space"), this);
-        shortcut->setContext(Qt::ApplicationShortcut);
-        connect(shortcut, &QShortcut::activated, this, [this]{ toggleLauncher(); });
         auto *escape = new QShortcut(QKeySequence(Qt::Key_Escape), this);
         escape->setContext(Qt::ApplicationShortcut);
         connect(escape, &QShortcut::activated, this, [this]{ if (launcher->isVisible()) launcher->hide(); });
