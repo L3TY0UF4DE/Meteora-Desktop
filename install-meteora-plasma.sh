@@ -172,8 +172,10 @@ case "$mode" in
         echo "Backup saved at $backup"
         plasma-apply-lookandfeel -a "$theme_id" --resetLayout
         plasma-apply-colorscheme MeteoraDark
-        if command -v plasma-apply-icons >/dev/null 2>&1; then
-            plasma-apply-icons Meteora
+        # Plasma 6 provides plasma-changeicons (not plasma-apply-icons).
+        # This also broadcasts the icon change to running KDE applications.
+        if command -v plasma-changeicons >/dev/null 2>&1; then
+            plasma-changeicons Meteora
         fi
         if command -v plasma-apply-desktoptheme >/dev/null 2>&1; then
             plasma-apply-desktoptheme Meteora

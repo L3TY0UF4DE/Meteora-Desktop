@@ -26,8 +26,8 @@ AbstractKickoffItemDelegate {
     topPadding: Kirigami.Units.smallSpacing * 2
     bottomPadding: Kirigami.Units.smallSpacing * 2
 
-    icon.width: 40
-    icon.height: 40
+    icon.width: 48
+    icon.height: 48
 
     labelTruncated: label.truncated
     descriptionVisible: false

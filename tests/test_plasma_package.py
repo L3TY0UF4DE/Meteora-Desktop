@@ -100,7 +100,7 @@ class PlasmaPackageTest(unittest.TestCase):
             fakebin = Path(temp) / "fakebin"
             fakebin.mkdir()
             log = Path(temp) / "mock-calls"
-            for name in ("plasma-apply-lookandfeel", "plasma-apply-colorscheme"):
+            for name in ("plasma-apply-lookandfeel", "plasma-apply-colorscheme", "plasma-changeicons"):
                 exe = fakebin / name
                 exe.write_text('#!/bin/sh\nprintf "%s\\n" "$0 $*" >> "$METEORA_TEST_LOG"\n')
                 exe.chmod(0o755)
@@ -141,6 +141,7 @@ class PlasmaPackageTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertIn("--resetLayout", log.read_text())
             self.assertIn("MeteoraDark", log.read_text())
+            self.assertIn("plasma-changeicons Meteora", log.read_text())
             backup = Path((state / "meteora/last-backup.txt").read_text().strip())
             self.assertEqual((backup / "kdeglobals").read_text(), "[General]\nName=Original\n")
             self.assertTrue((home / "Desktop/Home").is_symlink())
