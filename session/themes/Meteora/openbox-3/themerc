@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: MIT
+border.width: 1
+padding.width: 8
+padding.height: 7
+window.handle.width: 3
+window.client.padding.width: 0
+window.label.text.justify: left
+window.active.border.color: #42627d
+window.inactive.border.color: #263745
+window.active.title.bg: flat solid
+window.active.title.bg.color: #162434
+window.inactive.title.bg: flat solid
+window.inactive.title.bg.color: #121c28
+window.active.label.bg: parentrelative
+window.inactive.label.bg: parentrelative
+window.active.label.text.color: #e7f2ff
+window.inactive.label.text.color: #8295a9
+window.active.handle.bg: flat solid
+window.active.handle.bg.color: #162434
+window.inactive.handle.bg: flat solid
+window.inactive.handle.bg.color: #121c28
+window.active.grip.bg: parentrelative
+window.inactive.grip.bg: parentrelative
+window.active.button.unpressed.bg: parentrelative
+window.active.button.unpressed.image.color: #c3d7eb
+window.active.button.hover.bg: flat solid
+window.active.button.hover.bg.color: #2a4c68
+window.active.button.hover.image.color: #ffffff
+window.active.button.pressed.bg: flat solid
+window.active.button.pressed.bg.color: #37749d
+window.active.button.pressed.image.color: #ffffff
+window.inactive.button.unpressed.bg: parentrelative
+window.inactive.button.unpressed.image.color: #8498aa
+window.active.button.toggled.unpressed.bg: parentrelative
+window.active.button.toggled.unpressed.image.color: #79c5ff
+menu.border.color: #3c5369
+menu.border.width: 1
+menu.overlap.x: -2
+menu.overlap.y: 0
+menu.title.bg: flat solid
+menu.title.bg.color: #162434
+menu.title.text.color: #a9dbff
+menu.items.bg: flat solid
+menu.items.bg.color: #132130
+menu.items.text.color: #e7eef7
+menu.items.disabled.text.color: #718399
+menu.items.active.bg: flat solid
+menu.items.active.bg.color: #264b6a
+menu.items.active.text.color: #ffffff
+osd.bg: flat solid
+osd.bg.color: #132130
+osd.border.color: #4b718e
+osd.border.width: 1
+osd.label.text.color: #e7f2ff
+osd.hilight.bg: flat solid
+osd.hilight.bg.color: #64b8f4
+osd.unhilight.bg: flat solid
+osd.unhilight.bg.color: #32485b
