@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# Run inside a dedicated X server (SDDM/startx/Xephyr), never replace another WM.
+set -Eeuo pipefail
+if [[ -z ${DISPLAY:-} ]]; then
+    echo 'Meteora requires an X11 display. Choose Meteora (Lightweight) at login or use startx.' >&2
+    exit 1
+fi
+for tool in openbox meteora-shell xprop; do
+    command -v "$tool" >/dev/null || { echo "Missing dependency: $tool" >&2; exit 1; }
+done
+if xprop -root _NET_SUPPORTING_WM_CHECK 2>/dev/null | grep -Eq '0x[1-9a-fA-F][0-9a-fA-F]*'; then
+    echo 'A window manager already owns this display. Use the nested demo or --preview.' >&2
+    exit 1
+fi
+if [[ -z ${DBUS_SESSION_BUS_ADDRESS:-} ]]; then
+    exec dbus-run-session -- "$0" "$@"
+fi
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+data_dir="$script_dir/../share/meteora"
+[[ -f "$data_dir/openbox.xml" ]] || { echo "Missing Meteora session data: $data_dir" >&2; exit 1; }
+export XDG_CURRENT_DESKTOP=Meteora
+export XDG_SESSION_DESKTOP=meteora
+export XDG_SESSION_TYPE=x11
+export QT_QPA_PLATFORM=xcb
+export QT_ACCESSIBILITY=1
+export XCURSOR_THEME=${XCURSOR_THEME:-Adwaita}
+export XCURSOR_SIZE=${XCURSOR_SIZE:-24}
+export PATH="$script_dir:$PATH"
+# Do not start the user's Openbox autostart or a second desktop's daemons.
+wm_pid= shell_pid=
+cleanup() {
+    trap - EXIT INT TERM
+    [[ -z "$shell_pid" ]] || kill "$shell_pid" 2>/dev/null || true
+    [[ -z "$wm_pid" ]] || kill "$wm_pid" 2>/dev/null || true
+    wait 2>/dev/null || true
+}
+trap cleanup EXIT INT TERM
+openbox --config-file "$data_dir/openbox.xml" & wm_pid=$!
+for ((attempt=0; attempt<100; ++attempt)); do
+    if xprop -root _NET_SUPPORTING_WM_CHECK 2>/dev/null | grep -Eq '0x[1-9a-fA-F][0-9a-fA-F]*'; then break; fi
+    kill -0 "$wm_pid" 2>/dev/null || { echo 'Openbox could not start.' >&2; exit 1; }
+    sleep 0.05
+done
+meteora-shell & shell_pid=$!
+# Either component exiting ends this session cleanly; no restart storm.
+set +e
+wait -n "$wm_pid" "$shell_pid"
+status=$?
+exit "$status"

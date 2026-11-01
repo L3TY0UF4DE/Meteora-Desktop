@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Meteora (Lightweight)
+Comment=Native Meteora desktop with Openbox window management
+Exec=meteora-session
+TryExec=meteora-session
+Type=Application
+DesktopNames=Meteora;

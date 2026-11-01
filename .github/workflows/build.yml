@@ -1,34 +1,42 @@
-name: Build Meteora Preview
+name: Native lightweight desktop
 
 on:
   push:
-    branches: [main, development]
+    branches: [main, development, lightweight-demo]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  linux-build:
+  native-session:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Install Qt 6 and build tools
-        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++ qt6-base-dev adwaita-icon-theme
-      - name: Configure
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-      - name: Build
-        run: cmake --build build --parallel 2
-      - name: Render reference screenshot
-        env:
-          QT_QPA_PLATFORM: offscreen
-        run: ./build/meteora-preview --capture meteora-preview-reference.png
-      - name: Upload design screenshot
+      - name: Install native build and graphical test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake ninja-build g++ pkg-config qt6-base-dev libqt6svg6 libx11-dev libxi-dev libglib2.0-dev xvfb xauth xdotool x11-utils xterm openbox dbus-x11 adwaita-icon-theme fonts-dejavu-core
+      - name: Build without architecture-specific CPU flags
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+          cmake --build build --parallel 2
+          cmake --install build --prefix "$PWD/build/stage"
+      - name: Desktop-entry and live-settings tests
+        run: ctest --test-dir build --output-on-failure
+      - name: Full graphical session at 1280 by 800
+        run: dbus-run-session -- python3 tests/session_smoke.py --build build --output test-output/1280
+      - name: Upload screenshots, resource measurements and session logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meteora-design-screenshot
-          path: meteora-preview-reference.png
-          if-no-files-found: error
-      - name: Upload compiled preview
-        uses: actions/upload-artifact@v4
+          name: meteora-native-demo-evidence
+          path: test-output/
+          if-no-files-found: warn
+      - name: Archive portable install tree
+        run: tar -C build/stage -czf meteora-native-demo-linux-x86_64.tar.gz .
+      - uses: actions/upload-artifact@v4
         with:
-          name: meteora-preview-linux
-          path: build/meteora-preview
-          if-no-files-found: error
+          name: meteora-native-demo-ubuntu-x86_64
+          path: meteora-native-demo-linux-x86_64.tar.gz
