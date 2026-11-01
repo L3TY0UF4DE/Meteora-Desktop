@@ -27,9 +27,31 @@
 #include <QUrl>
 #include <QVBoxLayout>
 #include <QWindow>
+#include <QStyledItemDelegate>
+#include <QTextLayout>
 
 namespace Meteora {
 namespace {
+class ApplicationDelegate : public QStyledItemDelegate {
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+    QSize sizeHint(const QStyleOptionViewItem &,const QModelIndex &) const override { return {106,90}; }
+    void paint(QPainter *p,const QStyleOptionViewItem &option,const QModelIndex &index) const override {
+        p->save(); p->setRenderHint(QPainter::Antialiasing);
+        const QRect r=option.rect.adjusted(3,2,-3,-2);
+        if(option.state & (QStyle::State_Selected | QStyle::State_MouseOver)) {
+            p->setPen(Qt::NoPen); p->setBrush(QColor(option.state & QStyle::State_Selected ? "#234560" : "#1d3347")); p->drawRoundedRect(r,7,7);
+        }
+        const auto icon=qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
+        icon.paint(p,QRect(r.center().x()-18,r.top()+5,36,36));
+        p->setPen(QColor("#edf4fc")); p->setFont(option.font);
+        QTextLayout text(index.data(Qt::DisplayRole).toString(),option.font);
+        QTextOption textOption; textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere); textOption.setAlignment(Qt::AlignHCenter); text.setTextOption(textOption);
+        text.beginLayout(); qreal y=0;
+        for(int n=0;n<2;++n) { auto line=text.createLine(); if(!line.isValid()) break; line.setLineWidth(r.width()-8); line.setPosition(QPointF(0,y)); y+=line.height(); }
+        text.endLayout(); p->setClipRect(r); text.draw(p,QPointF(r.left()+4,r.top()+46)); p->restore();
+    }
+};
 QToolButton *button(QWidget *parent,const QString &icon,const QString &name,const QString &fallback={}) {
     auto *b=new QToolButton(parent); b->setObjectName("panelButton");
     b->setIcon(QIcon::fromTheme(icon)); b->setIconSize(QSize(24,24));
@@ -138,7 +160,7 @@ void Desktop::buildLauncher() {
     auto *title=new QLabel("Meteora",launcher); title->setStyleSheet("font-size:17px; font-weight:600;"); header->addWidget(title); header->addSpacing(18);
     search=new QLineEdit(launcher); search->setPlaceholderText("Search applications…"); search->setAccessibleName("Search applications"); search->setClearButtonEnabled(true); header->addWidget(search,1); root->addLayout(header);
     auto *body=new QHBoxLayout; body->setSpacing(12);
-    categories=new QListWidget(launcher); categories->setAccessibleName("Application categories"); categories->setFixedWidth(154); categories->setIconSize(QSize(18,18));
+    categories=new QListWidget(launcher); categories->setAccessibleName("Application categories"); categories->setFixedWidth(166); categories->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); categories->setStyleSheet("QListWidget::item { padding:7px 5px; }"); categories->setIconSize(QSize(18,18));
     const QList<QStringList> groups={
         {"Favorites","@favorites","emblem-favorite"},{"All Applications","","view-app-grid"},
         {"Development","Development","applications-development"},{"Graphics","Graphics","applications-graphics"},
@@ -149,7 +171,7 @@ void Desktop::buildLauncher() {
     for (const auto &g:groups) { auto *item=new QListWidgetItem(QIcon::fromTheme(g[2]),g[0],categories); item->setData(Qt::UserRole,g[1]); }
     categories->setCurrentRow(1); body->addWidget(categories);
     auto *right=new QVBoxLayout;
-    apps=new QListWidget(launcher); apps->setAccessibleName("Installed applications"); apps->setViewMode(QListView::IconMode); apps->setResizeMode(QListView::Adjust); apps->setMovement(QListView::Static); apps->setIconSize(QSize(36,36)); apps->setGridSize(QSize(106,90)); apps->setSpacing(2); apps->setWordWrap(true); apps->setUniformItemSizes(true); apps->setSelectionMode(QAbstractItemView::SingleSelection); apps->setContextMenuPolicy(Qt::CustomContextMenu);
+    apps=new QListWidget(launcher); apps->setAccessibleName("Installed applications"); apps->setViewMode(QListView::IconMode); apps->setResizeMode(QListView::Adjust); apps->setMovement(QListView::Static); apps->setIconSize(QSize(36,36)); apps->setGridSize(QSize(106,90)); apps->setSpacing(2); apps->setWordWrap(true); apps->setUniformItemSizes(true); apps->setItemDelegate(new ApplicationDelegate(apps)); apps->setSelectionMode(QAbstractItemView::SingleSelection); apps->setContextMenuPolicy(Qt::CustomContextMenu);
     right->addWidget(apps,1);
     empty=new QLabel("No applications in this category.",launcher); empty->setObjectName("muted"); empty->setWordWrap(true); right->addWidget(empty);
     body->addLayout(right,1); root->addLayout(body,1);
@@ -218,7 +240,7 @@ void Desktop::layout() {
     }
     const int w=qMin(674,screen.width()-24), h=qMin(490,screen.height()-height-margin-32);
     launcher->resize(w,qMax(260,h)); launcher->move(screen.left()+12,panel->y()-launcher->height()-10);
-    categories->setFixedWidth(w<600 ? 134 : 154);
+    categories->setFixedWidth(w<600 ? 140 : 166);
     apps->setGridSize(w<600 ? QSize(94,86) : QSize(106,90));
     history->setGeometry(screen.right()-qMin(360,screen.width()-24)-11,panel->y()-qMin(420,screen.height()-height-40)-10,qMin(360,screen.width()-24),qMin(420,screen.height()-height-40));
     toast->setGeometry(screen.right()-qMin(350,screen.width()-24)-11,panel->y()-132,qMin(350,screen.width()-24),120);

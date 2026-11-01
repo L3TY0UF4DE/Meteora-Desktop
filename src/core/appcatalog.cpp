@@ -49,12 +49,9 @@ void AppCatalog::reload() {
         entry.categories = QString::fromUtf8(g_desktop_app_info_get_categories(desktop));
         auto words = g_desktop_app_info_get_keywords(desktop);
         if (words) for (; *words; ++words) entry.keywords += QString::fromUtf8(*words) + ' ';
-        GIcon *icon = g_app_info_get_icon(info);
-        if (icon) {
-            char *name = g_icon_to_string(icon);
-            if (name) entry.iconName = QString::fromUtf8(name);
-            g_free(name);
-        }
+        char *icon = g_desktop_app_info_get_string(desktop, "Icon");
+        if (icon) entry.iconName = QString::fromUtf8(icon);
+        g_free(icon);
         apps.append(entry);
     }
     g_list_free_full(all, g_object_unref);

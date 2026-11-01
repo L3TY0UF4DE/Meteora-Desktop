@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 #include "windowbridge.h"
 #include <QGuiApplication>
+#include <QAbstractEventDispatcher>
 #include <QSocketNotifier>
 #include <QTimer>
 #include <QSet>
@@ -103,7 +104,7 @@ WindowBridge::WindowBridge(QObject *parent) : QObject(parent), d(std::make_uniqu
     }
     XFlush(d->display);
     auto *notifier = new QSocketNotifier(ConnectionNumber(d->display),QSocketNotifier::Read,this);
-    connect(notifier,&QSocketNotifier::activated,this,[this] {
+    const auto dispatch=[this] {
         while (XPending(d->display)) {
             XEvent e; XNextEvent(d->display,&e);
             if (e.type == GenericEvent && e.xcookie.extension == d->xi && XGetEventData(d->display,&e.xcookie)) {
@@ -128,7 +129,12 @@ WindowBridge::WindowBridge(QObject *parent) : QObject(parent), d(std::make_uniqu
                 d->watched.remove(e.xdestroywindow.window); d->icons.remove(e.xdestroywindow.window); d->changed.start();
             }
         }
-    });
+    };
+    connect(notifier,&QSocketNotifier::activated,this,dispatch);
+    // Synchronous X property reads may buffer events while draining the FD.
+    // Drain that queue before Qt sleeps, without introducing a polling timer.
+    connect(QAbstractEventDispatcher::instance(),&QAbstractEventDispatcher::aboutToBlock,this,dispatch);
+    QTimer::singleShot(0,this,dispatch);
 }
 WindowBridge::~WindowBridge() {
     if (d->display) { XCloseDisplay(d->display); XSetErrorHandler(previousHandler); bridgeDisplay=nullptr; }

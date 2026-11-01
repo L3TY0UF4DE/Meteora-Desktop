@@ -10,6 +10,10 @@
 #include <QStyleFactory>
 #include <QIcon>
 #include <QFont>
+#include <QPixmapCache>
+#include <QTemporaryFile>
+#include <QSaveFile>
+#include <QLockFile>
 
 namespace Meteora {
 QString assetPath(const QString &name) {
@@ -40,6 +44,12 @@ void applyPalette() {
     p.setColor(QPalette::Disabled, QPalette::ButtonText, QColor("#718399"));
     QApplication::setPalette(p);
     auto f = QApplication::font(); f.setPointSize(10); QApplication::setFont(f);
+    auto iconPaths=QIcon::themeSearchPaths();
+    iconPaths.prepend(QCoreApplication::applicationDirPath()+"/../share/icons");
+    const auto sourceIcons=assetPath("icons");
+    if(!sourceIcons.isEmpty()) iconPaths.prepend(sourceIcons);
+    QIcon::setThemeSearchPaths(iconPaths);
+    QPixmapCache::setCacheLimit(4096);
     QIcon::setFallbackThemeName("Adwaita");
     QIcon::setThemeName("Meteora");
     qApp->setStyleSheet(styleSheet());
@@ -80,21 +90,50 @@ QString styleSheet() {
         QMenu::item:selected { background:#264b6a; }
     )");
 }
+// Parse a fresh snapshot. QSettings caches files by timestamp/size; two atomic
+// writes of equal length in the same filesystem timestamp tick can look equal.
+// A unique snapshot avoids stale reads without a persistent polling loop.
+static QVariantMap readConfig(const QString &path) {
+    QFile source(path); QVariantMap values;
+    if(!source.open(QIODevice::ReadOnly) || source.size()>1024*1024) return values;
+    QTemporaryFile snapshot;
+    if(!snapshot.open()) return values;
+    snapshot.write(source.readAll()); snapshot.flush();
+    QSettings parsed(snapshot.fileName(),QSettings::IniFormat);
+    for(const auto &key:parsed.allKeys()) values.insert(key,parsed.value(key));
+    return values;
+}
 Preferences::Preferences(QObject *parent) : QObject(parent) {
     QDir().mkpath(QFileInfo(fileName()).absolutePath());
+    cache=readConfig(fileName());
     debounce.setSingleShot(true); debounce.setInterval(80);
-    connect(&debounce, &QTimer::timeout, this, [this] { watch(); emit changed(); });
+    connect(&debounce, &QTimer::timeout, this, [this] { watch(); reload(); });
     connect(&watcher, &QFileSystemWatcher::fileChanged, this, [this] { debounce.start(); });
     connect(&watcher, &QFileSystemWatcher::directoryChanged, this, [this] { debounce.start(); });
     watch();
 }
 QString Preferences::fileName() const { return QSettings("Meteora", "Desktop").fileName(); }
-QVariant Preferences::value(const QString &key, const QVariant &fallback) const {
-    QSettings s("Meteora", "Desktop"); s.sync(); return s.value(key, fallback);
+QVariant Preferences::value(const QString &key, const QVariant &fallback) const { return cache.value(key,fallback); }
+void Preferences::reload() {
+    const auto fresh=readConfig(fileName());
+    if(fresh!=cache) { cache=fresh; emit changed(); }
 }
 bool Preferences::setValue(const QString &key, const QVariant &value) {
-    QSettings s("Meteora", "Desktop"); s.setValue(key, value); s.sync();
-    watch(); emit changed(); return s.status() == QSettings::NoError;
+    QLockFile lock(fileName()+".meteora-lock");
+    if(!lock.tryLock(500)) return false;
+    auto values=readConfig(fileName()); values.insert(key,value);
+    QTemporaryFile staged;
+    if(!staged.open()) return false;
+    {
+        QSettings output(staged.fileName(),QSettings::IniFormat);
+        for(auto it=values.cbegin();it!=values.cend();++it) output.setValue(it.key(),it.value());
+        output.sync(); if(output.status()!=QSettings::NoError) return false;
+    }
+    // QSettings may atomically replace the temporary file, so reopen by name.
+    QFile encoded(staged.fileName()); if(!encoded.open(QIODevice::ReadOnly)) return false;
+    const auto bytes=encoded.readAll(); QSaveFile output(fileName());
+    if(!output.open(QIODevice::WriteOnly) || output.write(bytes)!=bytes.size() || !output.commit()) return false;
+    cache=readConfig(fileName()); watch(); emit changed(); return true;
 }
 void Preferences::watch() {
     const QString dir = QFileInfo(fileName()).absolutePath();

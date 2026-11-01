@@ -27,6 +27,7 @@ export QT_ACCESSIBILITY=1
 export XCURSOR_THEME=${XCURSOR_THEME:-Adwaita}
 export XCURSOR_SIZE=${XCURSOR_SIZE:-24}
 export PATH="$script_dir:$PATH"
+export XDG_DATA_DIRS="$script_dir/../share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 # Do not start the user's Openbox autostart or a second desktop's daemons.
 wm_pid= shell_pid=
 cleanup() {
@@ -42,6 +43,10 @@ for ((attempt=0; attempt<100; ++attempt)); do
     kill -0 "$wm_pid" 2>/dev/null || { echo 'Openbox could not start.' >&2; exit 1; }
     sleep 0.05
 done
+if ! xprop -root _NET_SUPPORTING_WM_CHECK 2>/dev/null | grep -Eq '0x[1-9a-fA-F][0-9a-fA-F]*'; then
+    echo 'Timed out waiting for the window manager.' >&2
+    exit 1
+fi
 meteora-shell & shell_pid=$!
 # Either component exiting ends this session cleanly; no restart storm.
 set +e

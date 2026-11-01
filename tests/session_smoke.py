@@ -132,7 +132,8 @@ with tempfile.TemporaryDirectory(prefix='meteora-session-test-') as temp:
                                      '-fs', '10', '-bg', '#0e1723', '-fg', '#dceeff', '-geometry', '62x18+530+75'])
         term = until(lambda: window('Meteora Demo Terminal'), 'real application managed')
         wid = term['id']
-        check(wid in status()['taskButtons'], 'real window appears in taskbar')
+        until(lambda: wid in status()['taskButtons'], 'taskbar receives client-list event')
+        check(True, 'real window appears in taskbar')
         run('xdotool', 'windowactivate', '--sync', wid)
         key('Super_L')
         until(lambda: status()['launcherVisible'], 'Super opens launcher above focused app')
@@ -166,7 +167,8 @@ with tempfile.TemporaryDirectory(prefix='meteora-session-test-') as temp:
         key('super+Down')
         shell('--settings')
         settings = until(lambda: window('Meteora Settings'), 'settings window launched')
-        check(settings['id'] in status()['taskButtons'], 'settings managed as a normal window')
+        until(lambda: settings['id'] in status()['taskButtons'], 'settings taskbar entry')
+        check(True, 'settings managed as a normal window')
         run('xdotool', 'windowactivate', '--sync', settings['id'])
         key('alt+Tab')
         active = run('xdotool', 'getactivewindow')
@@ -237,6 +239,15 @@ with tempfile.TemporaryDirectory(prefix='meteora-session-test-') as temp:
         print(json.dumps(report, indent=2), flush=True)
         shell('--quit')
         check(desktop.wait(timeout=5) == 0, 'clean shell shutdown')
+    except Exception:
+        try:
+            (output / 'failure-status.json').write_text(json.dumps(status(), indent=2))
+            shell('--capture', output / 'failure.png')
+        except Exception:
+            pass
+        for logfile in output.glob('*.log'):
+            print(logfile.name + ':\n' + logfile.read_text()[-5000:], flush=True)
+        raise
     finally:
         for p in reversed(processes):
             if p.poll() is None:

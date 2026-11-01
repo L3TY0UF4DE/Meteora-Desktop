@@ -19,6 +19,8 @@ signals:
     void changed();
 private:
     void watch();
+    void reload();
+    QVariantMap cache;
     QFileSystemWatcher watcher;
     QTimer debounce;
 };
